@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.class
+*.jar
+target/
+.idea/
+TEST*.xml
+Thumbs.db
+*.app
+*.exe
+*.war
