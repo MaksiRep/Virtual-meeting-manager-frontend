@@ -8,7 +8,7 @@ function Header() {
 
     return(
        <header className='header'>
-           <h2>Virtual Meeting Manager</h2>
+           <h2 className='header__title'>Virtual Meeting Manager</h2>
            <NavBar/>
        </header>
     );
