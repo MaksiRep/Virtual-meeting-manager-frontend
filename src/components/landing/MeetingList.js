@@ -1,11 +1,18 @@
 import React from "react";
+import Card from "./Card";
+import '../styles/MeetingList.css'
+import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
-function MeetingList() {
+function MeetingList(props) {
 
-
+    // const currentUser = React.useContext(CurrentUserContext);
 
     return(
-        <h1>тут листы короче</h1>
+        <section className='elements'>
+            {props.cards.map((card) => (
+                <Card card={card}></Card>
+            ))}
+        </section>
     );
 }
 
