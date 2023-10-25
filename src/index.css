@@ -1,0 +1,8 @@
+@import url(./vendor/normalize.css);
+@import url(./vendor/fonts/fonts.css);
+@import url(./blocks/form-auth/form-auth.css);
+@import url(./blocks/form-auth/__input/form-auth__input.css);
+@import url(./blocks/form-auth/__input/_type/form-auth__input_type_error.css);
+@import url(./blocks/form-auth/__input-error/form-auth__input-error_active.css);
+@import url(./blocks/footer/footer.css);
+@import url(./blocks/footer/__copyright/footer__copyright.css);
