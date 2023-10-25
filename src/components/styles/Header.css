@@ -21,3 +21,29 @@
         min-height: 3.5rem;
     }
 }
+
+
+.header__title{
+    font-size: 1.7rem;
+}
+
+@media screen and (max-width: 890px) {
+    .header__title{
+        margin-left: 1rem;
+    }
+}
+
+@media screen and (max-width: 890px){
+    .header__title{
+        margin-left: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 620px){
+    .header__title{
+        margin-left: 1.688rem;
+        width: 6rem;
+    }
+}
+
+
