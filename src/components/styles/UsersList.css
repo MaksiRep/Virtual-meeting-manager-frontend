@@ -1,0 +1,39 @@
+.users-list{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 55rem;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.user{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 80%;
+    margin: 1rem auto;
+    border: 3px solid #565657;
+}
+
+.user__info{
+    margin-left: 0.5rem;
+}
+
+.user__edit-button{
+    margin-left: 1rem;
+    width: 1rem;
+    height: 1rem;
+    align-self: center;
+    background-image: url('../../images/pencil.png');
+    background-position: center;
+    background-size: contain;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    cursor:pointer;
+    border: none;
+}
+
+.user-list__title{
+    font-size: 1.3rem;
+}

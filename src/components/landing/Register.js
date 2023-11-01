@@ -30,7 +30,8 @@ function Register() {
                 <button className='auth__admit-button'>Зарегистрироваться</button>
             </form>
             <div className='auth__switch'>
-                <p>Уже зарегестрированы? <Link to='/login' className='auth__switch-link'>Войти</Link></p>
+                <p className='auth__link-text'>Уже зарегестрированы?
+                    <Link to='/login' className='auth__switch-link'> Войти</Link></p>
             </div>
         </div>
     );

@@ -14,11 +14,14 @@
     font-size: 1.5rem;
     font-weight: 900;
     line-height: 1.816rem;
+    max-height: 6rem;
     margin: 0;
     max-width: 15rem;
     text-overflow: ellipsis;
-    white-space: initial;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .element__details{
@@ -29,6 +32,7 @@
 
 .element__date{
     margin: 0;
+    max-width: 6rem;
 }
 
 .element__image{
@@ -41,7 +45,7 @@
 
 .element__info{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     min-height: 5.1rem;
     justify-content: space-between;
     margin: 1.563rem 0.938rem 1.5rem 1.313rem;
@@ -49,14 +53,15 @@
 
 .element__will-go-section{
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .element__will-go{
     margin: 0 0.313rem 0 0;
-    font-size: 13px;
+    color: #d07cf7;
+    font-size: 0.9rem;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 600;
     line-height: normal;
 }
