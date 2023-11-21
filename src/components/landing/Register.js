@@ -27,11 +27,11 @@ function Register() {
                 </select>
                 <input className='form-auth__input' type='date' placeholder='Дата рождения'
                        id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01" />
-                <button className='auth__admit-button'>Зарегистрироваться</button>
+                <button className='auth__admit-button' type="submit">Зарегистрироваться</button>
             </form>
             <div className='auth__switch'>
                 <p className='auth__link-text'>Уже зарегестрированы?
-                    <Link to='/login' className='auth__switch-link'> Войти</Link></p>
+                    <Link to='/sign-in' className='auth__switch-link'> Войти</Link></p>
             </div>
         </div>
     );
