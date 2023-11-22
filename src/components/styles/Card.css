@@ -33,6 +33,7 @@
 .element__date{
     margin: 0;
     max-width: 6rem;
+    font-size: 0.9rem
 }
 
 .element__image{
@@ -49,6 +50,12 @@
     min-height: 5.1rem;
     justify-content: space-between;
     margin: 1.563rem 0.938rem 1.5rem 1.313rem;
+}
+
+.element__date-block{
+    margin-top: 0.1rem;
+    display: flex;
+    flex-direction: row;
 }
 
 .element__will-go-section{

@@ -1,0 +1,68 @@
+.meeting{
+    display: flex;
+    flex-direction: column;
+    max-width: 80rem;
+    margin: 0 auto 3rem;
+}
+
+.meeting__title{
+    margin-top: 0;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.meeting__columns{
+    display: flex;
+    flex-direction: row;
+}
+
+.meeting__info{
+    display: flex;
+    flex-direction: column;
+}
+
+.meeting__img{
+    max-width: 30rem;
+    margin-right: 5rem;
+    border-radius: 10px;
+}
+
+.contact-info{
+    display: flex;
+    flex-direction: row;
+    max-width: 17rem;
+    justify-content: space-around;
+    border-radius: 5px;
+    align-items: center;
+    border: 1px solid #c2bdff;
+    cursor: pointer;
+    background-color: #dcd9ff;
+}
+
+.meeting__owner{
+    margin-left: 0.6rem;
+}
+
+.meeting__other-info{
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    justify-content: space-between;
+}
+
+.meeting__description{
+    font-size: 1.2rem;
+}
+
+.meeting__button{
+
+}
+
+.contact-info__text{
+    margin: 0;
+}
+
+.contact-info__img{
+    max-width: 3rem;
+    max-height: 2.5rem;
+}
