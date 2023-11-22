@@ -27,6 +27,12 @@
     border-radius: 10px;
 }
 
+.meeting__error{
+    text-align: center;
+    font-size: 5rem;
+    margin-bottom: 2rem;
+}
+
 .contact-info{
     display: flex;
     flex-direction: row;

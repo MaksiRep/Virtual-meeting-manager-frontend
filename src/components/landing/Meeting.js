@@ -40,8 +40,9 @@ function Meeting(props) {
                         </div>
                     </div>
                 </div> :
-                <div>
-                    <h1>uh oh</h1>
+                <div className='meeting'>
+                    <h3 className='meeting__error'>404</h3>
+                    <h3 className='meeting__title'>Мероприятие не найдено</h3>
                 </div>}
         </>
     );
