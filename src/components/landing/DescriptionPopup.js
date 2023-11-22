@@ -1,16 +1,11 @@
 import React from "react";
-import '../styles/DescriptionPopup.css'
+import '../styles/Popup.css'
 
 function DescriptionPopup(props) {
 
-    const handleOverlayClose = (evt) => {
-        if(evt.target === evt.currentTarget)
-            props.onClose()
-    }
-
     return(
         <div className={`popup ${props.isOpen ? 'popup_opened' : ''}`} id='description-popup'
-            onMouseDown={handleOverlayClose}>
+            onMouseDown={props.onOverlayClose}>
             <div className='popup__container popup__form-container'>
                 <button className="popup__exit-button" type="button" onClick={props.onClose} />
                 <h2 className="popup__title">{props.card.name}</h2>

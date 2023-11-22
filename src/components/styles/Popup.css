@@ -19,7 +19,7 @@
 
 .popup__title{
     text-align: center;
-    margin: 1rem auto;
+    margin: 2rem auto;
     font-size: 2rem;
     min-height: 2rem;
     max-width: 90%;
@@ -37,6 +37,10 @@
     max-height: max-content;
 }
 
+.popup__form-block{
+    max-width: 26.875rem;
+}
+
 .popup__details{
     flex-grow: 1;
     margin: 0 1rem 0 0;
@@ -50,6 +54,6 @@
 }
 
 .popup__admit-button{
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
