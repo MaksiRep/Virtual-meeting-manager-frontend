@@ -87,10 +87,6 @@ function App() {
     }
 
 
-    const handleRecoveryPasswordClick = () => {
-        setRecoveryPasswordPopupState(true);
-        setAnyPopupState(true);
-    }
 
     const handleRecoveryPasswordSubmit = (email) => {
         console.log(email);
