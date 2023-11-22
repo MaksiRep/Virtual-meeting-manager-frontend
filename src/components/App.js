@@ -21,6 +21,7 @@ import Meeting from "./landing/Meeting";
 import ContactInfoPopup from "./landing/ContactInfoPopup";
 import contactInfoPopup from "./landing/ContactInfoPopup";
 
+
 function App() {
     const [currentUser, setCurrentUser] = useState({});
     const [currentCards, setCurrentCards] = useState([]);
@@ -85,6 +86,12 @@ function App() {
 
     }
 
+
+    const handleRecoveryPasswordClick = () => {
+        setRecoveryPasswordPopupState(true);
+        setAnyPopupState(true);
+    }
+
     const handleRecoveryPasswordSubmit = (email) => {
         console.log(email);
         closeAllPopups();
@@ -126,6 +133,7 @@ function App() {
                         onClose={closeAllPopups} onSubmit={handleRecoveryPasswordSubmit} onOverlayClose={handleOverlayClose}/>
                    <ContactInfoPopup isOpen={isContactInfoPopupOpen} onOverlayClose={handleOverlayClose}
                         onClose={closeAllPopups} contactInfo={contactInfo}/>
+
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>
