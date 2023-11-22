@@ -10,11 +10,13 @@
     max-height: 70vh;
     min-width: 2rem;
     min-height: 2rem;
+    height: 100%;
     margin: 0 1rem 1rem;
     flex-shrink: 1;
     overflow: hidden;
     object-fit: contain;
     object-position: center;
+    border-radius: 10px;
 }
 
 .popup__title{

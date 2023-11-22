@@ -17,13 +17,19 @@ import PersonalInfo from "./landing/PersonalInfo";
 import UsersList from "./landing/UsersList";
 import ForgottenPasswordPopup from "./landing/ForgottenPasswordPopup";
 import RecoveryPassword from "./landing/RecoveryPassword";
+import Meeting from "./landing/Meeting";
+import ContactInfoPopup from "./landing/ContactInfoPopup";
+import contactInfoPopup from "./landing/ContactInfoPopup";
+
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
     const [currentCards, setCurrentCards] = useState([]);
     const [users, setUsers] = useState([]);
+    const [contactInfo, setContactInfo] = useState({});
     const [isDescriptionPopupOpen, setDescriptionPopupState] = useState(false);
     const [isRecoveryPasswordPopupOpen, setRecoveryPasswordPopupState] = useState(false);
+    const [isContactInfoPopupOpen, setContactInfoPopupState] = useState(false);
     const [selectedCard, setSelectedCard] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
     const [isLoggedIn, setLoggedInStatus] = useState(false);
@@ -60,6 +66,17 @@ function App() {
         setAnyPopupState(true);
     }
 
+    const handleRecoveryPasswordClick = () => {
+        setRecoveryPasswordPopupState(true);
+        setAnyPopupState(true);
+    }
+
+    const handleContactInfoClick = (info) => {
+        setContactInfo(info);
+        setContactInfoPopupState(true);
+        setAnyPopupState(true);
+    }
+
     const handleOverlayClose = (evt) => {
         if(evt.target === evt.currentTarget)
             closeAllPopups();
@@ -68,6 +85,7 @@ function App() {
     const handleChangeProfile = (user) => {
 
     }
+
 
     const handleRecoveryPasswordClick = () => {
         setRecoveryPasswordPopupState(true);
@@ -86,6 +104,7 @@ function App() {
     const closeAllPopups = () => {
         setDescriptionPopupState(false);
         setRecoveryPasswordPopupState(false);
+        setContactInfoPopupState(false);
         setAnyPopupState(false);
     }
 
@@ -105,12 +124,16 @@ function App() {
                            <Route path='profile/personal-info' element={<PersonalInfo onChange={handleChangeProfile}/>}/>
                            <Route path='/profile/users-list' element={<UsersList users={users} isAdmin={isAdmin}/>}/>
                            <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
+                           <Route path='/meeting/:id' element={<Meeting meetings={currentCards} onContactInfoClick={handleContactInfoClick}/>}/>
                        </Routes>
                    </main>
                    <DescriptionPopup isOpen={isDescriptionPopupOpen} card={selectedCard} onClose={closeAllPopups}
                         onOverlayClose={handleOverlayClose}/>
                    <ForgottenPasswordPopup isOpen={isRecoveryPasswordPopupOpen} btnMessage={recoveryBtnMessage}
                         onClose={closeAllPopups} onSubmit={handleRecoveryPasswordSubmit} onOverlayClose={handleOverlayClose}/>
+                   <ContactInfoPopup isOpen={isContactInfoPopupOpen} onOverlayClose={handleOverlayClose}
+                        onClose={closeAllPopups} contactInfo={contactInfo}/>
+
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>

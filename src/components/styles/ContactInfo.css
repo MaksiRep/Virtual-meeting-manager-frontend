@@ -1,0 +1,23 @@
+.contact-info-block{
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    margin: 0 auto 2rem;
+}
+
+.contact-info__email-img{
+    max-width: 2rem;
+    max-height: 1.3rem;
+    margin-right: 0.5rem;
+}
+
+.contact-info__phone-img{
+    max-width: 1.5rem;
+    max-height: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+.contact-info__line{
+    display: flex;
+    align-items: center;
+}
