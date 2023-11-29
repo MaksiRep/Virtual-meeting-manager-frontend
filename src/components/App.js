@@ -21,6 +21,7 @@ import Meeting from "./landing/Meeting";
 import ContactInfoPopup from "./landing/ContactInfoPopup";
 import contactInfoPopup from "./landing/ContactInfoPopup";
 import EditMeetingPopup from "./landing/EditMeetingPopup";
+import UserPopup from "./landing/UserPopup";
 
 
 function App() {
@@ -32,8 +33,10 @@ function App() {
     const [isRecoveryPasswordPopupOpen, setRecoveryPasswordPopupState] = useState(false);
     const [isContactInfoPopupOpen, setContactInfoPopupState] = useState(false);
     const [isEditMeetingPopupOpen, setEditMeetingPopupState] = useState(false);
+    const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
     const [selectedCard, setSelectedCard] = useState({});
     const [selectedEditCard, setSelectedEditCard] = useState({});
+    const [selectedUser, setSelectedUser] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
     const [isLoggedIn, setLoggedInStatus] = useState(false);
     const [isAdmin, setAdminStatus] = useState(true);
@@ -87,13 +90,19 @@ function App() {
         setAnyPopupState(true);
     }
 
+    const handleEditUserClick = (info) => {
+        setSelectedUser(info);
+        setEditUserPopupState(true);
+        setAnyPopupState(true);
+    }
+
     const handleOverlayClose = (evt) => {
         if(evt.target === evt.currentTarget)
             closeAllPopups();
     }
 
     const handleChangeProfile = (user) => {
-
+        console.log(user);
     }
 
 
@@ -102,8 +111,13 @@ function App() {
         closeAllPopups();
     }
 
-    const handleChangeMeeting = (info) => {
-        console.log(info);
+    const handleChangeMeeting = (meeting) => {
+        console.log(meeting);
+        closeAllPopups();
+    }
+
+    const handleChangeUser = (user) => {
+        console.log(user);
         closeAllPopups();
     }
 
@@ -116,6 +130,7 @@ function App() {
         setRecoveryPasswordPopupState(false);
         setContactInfoPopupState(false);
         setEditMeetingPopupState(false);
+        setEditUserPopupState(false);
         setAnyPopupState(false);
     }
 
@@ -133,7 +148,7 @@ function App() {
                                 onCardClick={handleCardClick} isAdmin={isAdmin}/>}/>
                            <Route path='/meeting-list' element={<MeetingList cards={currentCards} onCardClick={handleCardClick}/>}/>
                            <Route path='profile/personal-info' element={<PersonalInfo onChange={handleChangeProfile}/>}/>
-                           <Route path='/profile/users-list' element={<UsersList users={users} isAdmin={isAdmin}/>}/>
+                           <Route path='/profile/users-list' element={<UsersList users={users} onClick={handleEditUserClick} isAdmin={isAdmin}/>}/>
                            <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
                            <Route path='/meeting/:id'
                                   element={<Meeting meetings={currentCards}
@@ -149,6 +164,9 @@ function App() {
                    <EditMeetingPopup isOpen={isEditMeetingPopupOpen} btnMessage={editBtnMessage}
                         onClose={closeAllPopups} onSubmit={handleChangeMeeting} onOverlayClose={handleOverlayClose}
                         style={editPopupStyle} meeting={selectedEditCard}/>
+                   <UserPopup isOpen={isEditUserPopupOpen} btnMessage={editBtnMessage}
+                        onClose={closeAllPopups} onSubmit={handleChangeUser} onOverlayClose={handleOverlayClose}
+                        user={selectedUser}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>
