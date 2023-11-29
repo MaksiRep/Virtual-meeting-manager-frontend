@@ -10,14 +10,26 @@
 .user{
     display: flex;
     flex-direction: row;
-    justify-content: center;
     width: 80%;
-    margin: 1rem auto;
-    border: 3px solid #565657;
+    margin: auto;
+    border-bottom: 1px solid #565657;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.user:hover{
+    background-color: gray;
 }
 
 .user__info{
-    margin-left: 0.5rem;
+    margin-left: 6rem;
+}
+
+.user__info-mail{
+    display: flex;
+    margin-left: 0;
+    margin-right: 6rem;
+    justify-self: flex-end;
 }
 
 .user__edit-button{

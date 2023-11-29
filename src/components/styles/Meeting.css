@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     max-width: 80rem;
-    margin: 0 auto 3rem;
+    margin: 0 auto 2rem;
 }
 
 .meeting__title{
@@ -43,6 +43,8 @@
     border: 1px solid #c2bdff;
     cursor: pointer;
     background-color: #dcd9ff;
+    min-height: 2.5rem;
+    margin-bottom: 0.7rem;
 }
 
 .meeting__owner{
@@ -54,14 +56,11 @@
     flex-direction: column;
     max-height: 100%;
     justify-content: space-between;
+    min-width: 50%;
 }
 
 .meeting__description{
     font-size: 1.2rem;
-}
-
-.meeting__button{
-
 }
 
 .contact-info__text{
@@ -71,4 +70,12 @@
 .contact-info__img{
     max-width: 3rem;
     max-height: 2.5rem;
+}
+
+.edit-button__image{
+    max-width: 1.3rem;
+    max-height: 1.3rem;
+    padding: 0.1rem;
+    border: 2px solid #585858;
+    border-radius: 3px;
 }
