@@ -44,18 +44,30 @@
 }
 
 .popup__details{
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     margin: 0 1rem 0 0;
     width: 45%;
     max-height: 70vh;
     overflow: auto;
+    justify-content: space-between;
+}
+
+.popup-form__container{
+    max-width: 40rem;
 }
 
 .popup__scroll{
     overflow: auto;
 }
 
+.form__alt{
+    max-width: 26rem;
+}
+
 .popup__admit-button{
+    text-decoration: none;
     margin-bottom: 2rem;
 }
 

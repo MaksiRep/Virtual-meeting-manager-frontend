@@ -13,7 +13,7 @@ function DescriptionPopup(props) {
                 <div className='popup__info'>
                     <img className='popup__image' src={props.card.link} alt=''/>
                     <div className='popup__details'>
-                        <p className='popup__description'>{props.card.description}</p>
+                        <p className='popup__description'>{props.card.shortDescription}</p>
                         <Link to={'/meeting/' + props.card._id} onClick={props.onClose}
                               className='popup__admit-button'>Узнать больше</Link>
                     </div>

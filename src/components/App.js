@@ -7,7 +7,7 @@ import Register from "./landing/Register";
 import MeetingList from "./landing/MeetingList";
 import DescriptionPopup from "./landing/DescriptionPopup";
 import Profile from "./landing/Profile";
-import {recoveryBtnDefault, recoveryBtn} from "../utils/constants";
+import {recoveryBtnDefault, recoveryBtn, saveBtn, saveBtnDefault, editPopupStyle} from "../utils/constants";
 import {initialCards} from "../utils/initialCards";
 import {userInfo} from "../utils/initialCurrentUser";
 import {initialUsers} from "../utils/initialUsers";
@@ -20,6 +20,7 @@ import RecoveryPassword from "./landing/RecoveryPassword";
 import Meeting from "./landing/Meeting";
 import ContactInfoPopup from "./landing/ContactInfoPopup";
 import contactInfoPopup from "./landing/ContactInfoPopup";
+import EditMeetingPopup from "./landing/EditMeetingPopup";
 
 
 function App() {
@@ -30,11 +31,14 @@ function App() {
     const [isDescriptionPopupOpen, setDescriptionPopupState] = useState(false);
     const [isRecoveryPasswordPopupOpen, setRecoveryPasswordPopupState] = useState(false);
     const [isContactInfoPopupOpen, setContactInfoPopupState] = useState(false);
+    const [isEditMeetingPopupOpen, setEditMeetingPopupState] = useState(false);
     const [selectedCard, setSelectedCard] = useState({});
+    const [selectedEditCard, setSelectedEditCard] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
     const [isLoggedIn, setLoggedInStatus] = useState(false);
     const [isAdmin, setAdminStatus] = useState(true);
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
+    const [editBtnMessage, setEditBtnMessage] = useState(saveBtnDefault);
 
 
     useEffect(() => {
@@ -77,6 +81,12 @@ function App() {
         setAnyPopupState(true);
     }
 
+    const handleEditMeetingClick = (info) => {
+        setSelectedEditCard(info);
+        setEditMeetingPopupState(true);
+        setAnyPopupState(true);
+    }
+
     const handleOverlayClose = (evt) => {
         if(evt.target === evt.currentTarget)
             closeAllPopups();
@@ -87,9 +97,13 @@ function App() {
     }
 
 
-
-    const handleRecoveryPasswordSubmit = (email) => {
+    const handleRecoveryPassword = (email) => {
         console.log(email);
+        closeAllPopups();
+    }
+
+    const handleChangeMeeting = (info) => {
+        console.log(info);
         closeAllPopups();
     }
 
@@ -101,6 +115,7 @@ function App() {
         setDescriptionPopupState(false);
         setRecoveryPasswordPopupState(false);
         setContactInfoPopupState(false);
+        setEditMeetingPopupState(false);
         setAnyPopupState(false);
     }
 
@@ -120,16 +135,20 @@ function App() {
                            <Route path='profile/personal-info' element={<PersonalInfo onChange={handleChangeProfile}/>}/>
                            <Route path='/profile/users-list' element={<UsersList users={users} isAdmin={isAdmin}/>}/>
                            <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
-                           <Route path='/meeting/:id' element={<Meeting meetings={currentCards} onContactInfoClick={handleContactInfoClick}/>}/>
+                           <Route path='/meeting/:id'
+                                  element={<Meeting meetings={currentCards}
+                                                    onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}/>}/>
                        </Routes>
                    </main>
                    <DescriptionPopup isOpen={isDescriptionPopupOpen} card={selectedCard} onClose={closeAllPopups}
                         onOverlayClose={handleOverlayClose}/>
                    <ForgottenPasswordPopup isOpen={isRecoveryPasswordPopupOpen} btnMessage={recoveryBtnMessage}
-                        onClose={closeAllPopups} onSubmit={handleRecoveryPasswordSubmit} onOverlayClose={handleOverlayClose}/>
+                        onClose={closeAllPopups} onSubmit={handleRecoveryPassword} onOverlayClose={handleOverlayClose}/>
                    <ContactInfoPopup isOpen={isContactInfoPopupOpen} onOverlayClose={handleOverlayClose}
                         onClose={closeAllPopups} contactInfo={contactInfo}/>
-
+                   <EditMeetingPopup isOpen={isEditMeetingPopupOpen} btnMessage={editBtnMessage}
+                        onClose={closeAllPopups} onSubmit={handleChangeMeeting} onOverlayClose={handleOverlayClose}
+                        style={editPopupStyle} meeting={selectedEditCard}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>

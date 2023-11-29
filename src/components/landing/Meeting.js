@@ -1,6 +1,7 @@
 import React from "react";
 import '../styles/Meeting.css'
 import personalInfoIcon from '../../images/private-info.png';
+import pencilIcon from '../../images/pencil.png'
 import {useParams} from "react-router-dom";
 import {CurrentCardsContext} from "../../contexts/CurrentCardsContext";
 
@@ -18,6 +19,10 @@ function Meeting(props) {
         })
     }
 
+    function handleEditClick() {
+        props.onEditClick(currentMeeting);
+    }
+
     return(
         <>
             {currentMeeting ?
@@ -32,10 +37,14 @@ function Meeting(props) {
                                     <p className='contact-info__text'>Контактная информация</p>
                                     <img className='contact-info__img' src={personalInfoIcon}/>
                                 </div>
+                                <div className='contact-info' onClick={handleEditClick}>
+                                    <p className='contact-info__text'>Редактирование</p>
+                                    <img className='edit-button__image'  src={pencilIcon}/>
+                                </div>
                             </div>
                         </div>
                         <div className='meeting__other-info'>
-                            <p className='meeting__description'>{currentMeeting.description}</p>
+                            <p className='meeting__description'>{currentMeeting.fullDescription}</p>
                             <button className='popup__admit-button meeting__button'>Пойду</button>
                         </div>
                     </div>
