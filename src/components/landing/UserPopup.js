@@ -48,7 +48,7 @@ function UserPopup(props) {
                    id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01"/>
             <div className='form__checkbox-block'>
                 <input className='form__checkbox' type='checkbox' placeholder='Email' id='email-input'
-                       required minLength="2" maxLength="40" checked/>
+                       required minLength="2" maxLength="40" checked={props.user.isAdmin}/>
                 <label className='form__checkbox-label'>Администратор</label>
             </div>
         </PopupWithForm>
