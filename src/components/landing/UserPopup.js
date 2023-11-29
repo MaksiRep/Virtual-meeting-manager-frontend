@@ -10,6 +10,7 @@ function UserPopup(props) {
     const emailRef = React.useRef();
     const sexRef = React.useRef();
     const dateBirthRef = React.useRef();
+    const isAdminRef = React.useRef();
 
     useEffect(() => {
         nameRef.current.value = props.user.name;
@@ -17,6 +18,7 @@ function UserPopup(props) {
         emailRef.current.value = props.user.email;
         sexRef.current.value = props.user.sex;
         dateBirthRef.current.value = props.user.birthDate;
+        isAdminRef.current.checked = props.user.isAdmin;
     }, [props.isOpen]);
 
     function handleSubmit(e) {
@@ -48,7 +50,7 @@ function UserPopup(props) {
                    id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01"/>
             <div className='form__checkbox-block'>
                 <input className='form__checkbox' type='checkbox' placeholder='Email' id='email-input'
-                       required minLength="2" maxLength="40" checked={props.user.isAdmin}/>
+                       required minLength="2" maxLength="40" ref={isAdminRef}/>
                 <label className='form__checkbox-label'>Администратор</label>
             </div>
         </PopupWithForm>
