@@ -132,3 +132,20 @@
     cursor: pointer;
 }
 
+.form__checkbox-block{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    margin-bottom: 0.5rem;
+}
+
+.form__checkbox{
+    margin-right: 0.7rem;
+}
+
+.form__checkbox-label{
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.059rem;
+}
+

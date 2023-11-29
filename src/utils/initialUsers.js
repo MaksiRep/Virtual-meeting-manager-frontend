@@ -5,6 +5,7 @@ export const initialUsers = [
         email: 'm.serebrov@g.nsu.ru',
         sex: 'male',
         birthDate: '2001-06-10',
+        isAdmin: true,
         _id: 1
     },
     {
@@ -13,6 +14,7 @@ export const initialUsers = [
         email: 'm.pervukhin@g.nsu.ru',
         sex: 'male',
         birthDate: '2001-05-24',
+        isAdmin: true,
         _id: 2
     },
     {
@@ -21,6 +23,7 @@ export const initialUsers = [
         email: 'v.skripnikova@g.nsu.ru',
         sex: 'female',
         birthDate: '2001-05-25',
+        isAdmin: true,
         _id: 3
     },
     {
@@ -29,6 +32,7 @@ export const initialUsers = [
         email: 'p.osipova1@g.nsu.ru',
         sex: 'female',
         birthDate: '2001-05-28',
+        isAdmin: true,
         _id: 4
     },
 ]
