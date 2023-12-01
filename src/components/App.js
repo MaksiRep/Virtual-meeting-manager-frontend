@@ -22,6 +22,7 @@ import ContactInfoPopup from "./landing/ContactInfoPopup";
 import contactInfoPopup from "./landing/ContactInfoPopup";
 import EditMeetingPopup from "./landing/EditMeetingPopup";
 import UserPopup from "./landing/UserPopup";
+import MainPage from "./landing/MainPage";
 
 
 function App() {
@@ -141,7 +142,8 @@ function App() {
                    <Header className="App-header" />
                    <main className='content'>
                        <Routes>
-                           <Route path='/' element={<Navigate to='/meeting-list' replace={true}/>}/>
+                           <Route path='/*' element={<Navigate to='/home' replace={true}/>}/>
+                           <Route path='/home' element={<MainPage creators={users}/>}/>
                            <Route path='/sign-up' element={<Register />}/>
                            <Route path='/sign-in' element={<Login onRecoveryClick={handleRecoveryPasswordClick}/>}/>
                            <Route path='/profile' element={<Profile userInfo={currentUser} userCards={currentCards}
