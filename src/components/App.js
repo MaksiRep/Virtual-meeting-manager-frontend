@@ -7,12 +7,16 @@ import Register from "./landing/Register";
 import MeetingList from "./landing/MeetingList";
 import DescriptionPopup from "./landing/DescriptionPopup";
 import Profile from "./landing/Profile";
-import {recoveryBtnDefault, recoveryBtn, saveBtn, saveBtnDefault, editPopupStyle} from "../utils/constants";
+import {
+    authMessageSuccess, authMessageFailure, recoveryBtnDefault,
+    recoveryBtn, saveBtn, saveBtnDefault, editPopupStyle
+}from "../utils/constants";
 import {initialCards} from "../utils/initialCards";
 import {userInfo} from "../utils/initialCurrentUser";
 import {initialUsers} from "../utils/initialUsers";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 import {CurrentCardsContext} from "../contexts/CurrentCardsContext";
+import {loginUser} from "../utils/auth";
 import PersonalInfo from "./landing/PersonalInfo";
 import UsersList from "./landing/UsersList";
 import ForgottenPasswordPopup from "./landing/ForgottenPasswordPopup";
@@ -21,6 +25,7 @@ import Meeting from "./landing/Meeting";
 import ContactInfoPopup from "./landing/ContactInfoPopup";
 import contactInfoPopup from "./landing/ContactInfoPopup";
 import EditMeetingPopup from "./landing/EditMeetingPopup";
+import InfoTooltip from "./landing/InfoTooltip";
 import UserPopup from "./landing/UserPopup";
 import MainPage from "./landing/MainPage";
 
@@ -34,16 +39,39 @@ function App() {
     const [isRecoveryPasswordPopupOpen, setRecoveryPasswordPopupState] = useState(false);
     const [isContactInfoPopupOpen, setContactInfoPopupState] = useState(false);
     const [isEditMeetingPopupOpen, setEditMeetingPopupState] = useState(false);
+    const [isInfoTooltipPopupOpen, setInfoTooltipPopupState] = useState(false);
+    const [authMessage, setAuthMessage] = useState({});
     const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
     const [selectedCard, setSelectedCard] = useState({});
     const [selectedEditCard, setSelectedEditCard] = useState({});
     const [selectedUser, setSelectedUser] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
-    const [isLoggedIn, setLoggedInStatus] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(false);
     const [isAdmin, setAdminStatus] = useState(true);
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
     const [editBtnMessage, setEditBtnMessage] = useState(saveBtnDefault);
+    const navigate = useNavigate();
 
+    const isTokenExist = () => {
+        return localStorage.getItem('jwt')
+    }
+
+    useEffect(() => {
+        if(isTokenExist()){
+            setLoggedIn(true);
+            // checkToken(localStorage.getItem('jwt'))
+            //     .then(value => {
+            //         if(value) {
+            //             setLoggedIn(true);
+            //             navigate('/', {replace: true})
+            //         }
+            //     })
+            //     .catch((err)=>{
+            //         console.log(`Ошибка...: ${err}`);
+            //         navigate('/sign-in', {replace: true});
+            //     });
+        }
+    }, [])
 
     useEffect(() => {
         setCurrentUser(userInfo);
@@ -102,6 +130,22 @@ function App() {
             closeAllPopups();
     }
 
+    const handleLoginUser = (authInfo) => {
+        // loginUser(authInfo.email, authInfo.password)
+        //     .then((data) => {
+        //         localStorage.setItem('accessToken', data.accessToken);
+        //         localStorage.setItem('refreshToken', data.refreshToken);
+        //         console.log(data);
+        //         navigate('/meetings', {replace: true})
+        //     })
+        //     .catch(err => {
+        //         console.log(`Ошибка...: ${err}`);
+        //         setAuthMessage(authMessageFailure);
+        //         setInfoTooltipPopupState(true);
+        //         setAnyPopupState(true);
+        //     })
+    }
+
     const handleChangeProfile = (user) => {
         console.log(user);
     }
@@ -126,12 +170,21 @@ function App() {
        console.log(password);
     }
 
+    const handleLogOut = () => {
+        localStorage.clear();
+        setLoggedIn(false);
+        navigate('/sign-in', {replace: true});
+        setCurrentUser({});
+        setCurrentCards([]);
+    }
+
     const closeAllPopups = () => {
         setDescriptionPopupState(false);
         setRecoveryPasswordPopupState(false);
         setContactInfoPopupState(false);
         setEditMeetingPopupState(false);
         setEditUserPopupState(false);
+        setInfoTooltipPopupState(false);
         setAnyPopupState(false);
     }
 
@@ -145,7 +198,7 @@ function App() {
                            <Route path='/*' element={<Navigate to='/home' replace={true}/>}/>
                            <Route path='/home' element={<MainPage creators={users}/>}/>
                            <Route path='/sign-up' element={<Register />}/>
-                           <Route path='/sign-in' element={<Login onRecoveryClick={handleRecoveryPasswordClick}/>}/>
+                           <Route path='/sign-in' element={<Login onRecoveryClick={handleRecoveryPasswordClick} onSubmit={handleLoginUser}/>}/>
                            <Route path='/profile' element={<Profile userInfo={currentUser} userCards={currentCards}
                                 onCardClick={handleCardClick} isAdmin={isAdmin}/>}/>
                            <Route path='/meeting-list' element={<MeetingList cards={currentCards} onCardClick={handleCardClick}/>}/>
@@ -169,6 +222,8 @@ function App() {
                    <UserPopup isOpen={isEditUserPopupOpen} btnMessage={editBtnMessage}
                         onClose={closeAllPopups} onSubmit={handleChangeUser} onOverlayClose={handleOverlayClose}
                         user={selectedUser}/>
+                   <InfoTooltip authMessage={authMessage} isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups}
+                                onOverlayClose={handleOverlayClose}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>
