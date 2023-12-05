@@ -35,4 +35,13 @@ export const initialUsers = [
         isAdmin: true,
         _id: 4
     },
+    {
+        name: 'Владислав',
+        surname: 'Афанасьев',
+        email: 'v.afanasev1@g.nsu.ru',
+        sex: 'male',
+        birthDate: '2000-10-22',
+        isAdmin: true,
+        _id: 5
+    }
 ]

@@ -1,6 +1,7 @@
 import React from "react";
 import NavBar from "./NavBar";
 import '../styles/Header.css'
+import {Link} from "react-router-dom";
 
 function Header() {
 
@@ -8,7 +9,7 @@ function Header() {
 
     return(
        <header className='header'>
-           <h2 className='header__title'>Virtual Meeting Manager</h2>
+           <Link to='/home' className='header__title'>Virtual Meeting Manager</Link>
            <NavBar/>
        </header>
     );

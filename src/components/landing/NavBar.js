@@ -17,7 +17,7 @@ function NavBar() {
     return(
         <nav className='menu'>
             <NavLink to='/meeting-list' className={({isActive}) => `menu__link 
-                ${isActive ? "menu__link_active" : ""}`}>Домой</NavLink>
+                ${isActive ? "menu__link_active" : ""}`}>Мероприятия</NavLink>
             {authPath()}
             <NavLink to='/profile' className={({isActive}) => `menu__link 
                 ${isActive ? "menu__link_active" : ""}`}>Личный кабинет</NavLink>

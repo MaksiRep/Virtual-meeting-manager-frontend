@@ -1,9 +1,9 @@
 .menu{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     margin: 0;
-    width: 35%;
+    width: 50%;
     align-items: center;
 }
 
