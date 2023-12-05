@@ -1,7 +1,13 @@
-import React from "react";
+import React, {useEffect} from "react";
 import '../styles/UsersList.css'
+import {initialUsers} from "../../utils/initialUsers";
 
 function UsersList(props) {
+
+
+    useEffect(() => {
+        console.log(props.users);
+    }, [])
 
     function handleUserClick(user) {
         props.onClick(user);

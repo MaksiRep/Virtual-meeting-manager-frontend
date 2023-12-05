@@ -1,7 +1,7 @@
 .meeting{
     display: flex;
     flex-direction: column;
-    max-width: 80rem;
+    max-width: 75rem;
     margin: 0 auto 2rem;
 }
 
@@ -76,6 +76,6 @@
     max-width: 1.3rem;
     max-height: 1.3rem;
     padding: 0.1rem;
-    border: 2px solid #585858;
+    border: 2px solid #000;
     border-radius: 3px;
 }

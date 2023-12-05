@@ -2,7 +2,7 @@ import React from "react";
 import '../styles/NavBar.css'
 import {NavLink, Link, useLocation} from "react-router-dom";
 
-function NavBar() {
+function NavBar(props) {
 
     const location = useLocation();
 
@@ -16,11 +16,14 @@ function NavBar() {
 
     return(
         <nav className='menu'>
-            <NavLink to='/meeting-list' className={({isActive}) => `menu__link 
-                ${isActive ? "menu__link_active" : ""}`}>Мероприятия</NavLink>
-            {authPath()}
-            <NavLink to='/profile' className={({isActive}) => `menu__link 
-                ${isActive ? "menu__link_active" : ""}`}>Личный кабинет</NavLink>
+            {props.loggedIn ?
+                <>
+                    <NavLink to='/meeting-list' className={({isActive}) => `menu__link 
+                    ${isActive ? "menu__link_active" : ""}`}>Мероприятия</NavLink>
+                    <NavLink to='/profile' className={({isActive}) => `menu__link 
+                    ${isActive ? "menu__link_active" : ""}`}>Личный кабинет</NavLink>
+                </> : '' }
+            {!props.loggedIn ? authPath() : ''}
         </nav>
     );
 }

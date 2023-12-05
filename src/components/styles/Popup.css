@@ -7,7 +7,7 @@
 
 .popup__image{
     max-width: 45%;
-    max-height: 70vh;
+    max-height: 65vh;
     min-width: 2rem;
     min-height: 2rem;
     height: 100%;
@@ -69,5 +69,9 @@
 .popup__admit-button{
     text-decoration: none;
     margin-bottom: 2rem;
+}
+
+.user-exit-button{
+    top: 0;
 }
 

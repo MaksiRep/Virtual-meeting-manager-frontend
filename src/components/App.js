@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import './App.css';
-import {Route, Routes, Navigate, useNavigate} from 'react-router-dom'
+import {Route, Routes, Navigate, useNavigate, useLocation, useHistory} from 'react-router-dom'
 import Header from "./landing/Header";
 import Login from "./landing/Login";
 import Register from "./landing/Register";
@@ -11,6 +11,7 @@ import {
     authMessageSuccess, authMessageFailure, recoveryBtnDefault,
     recoveryBtn, saveBtn, saveBtnDefault, editPopupStyle
 }from "../utils/constants";
+import api from "../utils/Api";
 import {initialCards} from "../utils/initialCards";
 import {userInfo} from "../utils/initialCurrentUser";
 import {initialUsers} from "../utils/initialUsers";
@@ -28,6 +29,7 @@ import EditMeetingPopup from "./landing/EditMeetingPopup";
 import InfoTooltip from "./landing/InfoTooltip";
 import UserPopup from "./landing/UserPopup";
 import MainPage from "./landing/MainPage";
+import ProtectedRouteElement from "./landing/ProtectedRoute";
 
 
 function App() {
@@ -51,27 +53,37 @@ function App() {
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
     const [editBtnMessage, setEditBtnMessage] = useState(saveBtnDefault);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const isTokenExist = () => {
-        return localStorage.getItem('jwt')
+    const isRefreshTokenExist = () => {
+        return localStorage.getItem('refreshToken')
     }
 
     useEffect(() => {
-        if(isTokenExist()){
+        if(isRefreshTokenExist()){
             setLoggedIn(true);
-            // checkToken(localStorage.getItem('jwt'))
-            //     .then(value => {
-            //         if(value) {
-            //             setLoggedIn(true);
-            //             navigate('/', {replace: true})
-            //         }
-            //     })
-            //     .catch((err)=>{
-            //         console.log(`Ошибка...: ${err}`);
-            //         navigate('/sign-in', {replace: true});
-            //     });
+            navigate(location.pathname);
         }
-    }, [])
+    },[])
+
+    useEffect(() => {
+        if(isRefreshTokenExist()){
+            Promise.all([
+                api.getUserInfo(),
+                api.getInitialMeetings()
+            ])
+                .then((values) => {
+                    console.log(values);
+                    // let userLoadedInfo, cardsData;
+                    // [userLoadedInfo, cardsData] = values;
+                    // setCurrentUser(userLoadedInfo);
+                    // setCurrentCards(cardsData);
+                })
+                .catch((err)=>{
+                    console.log(`Ошибка...: ${err}`);
+                })
+        }
+    }, [isLoggedIn]);
 
     useEffect(() => {
         setCurrentUser(userInfo);
@@ -82,7 +94,6 @@ function App() {
     },[])
 
     useEffect(() => {
-        if(isAdmin)
             setUsers(initialUsers);
     }, [])
 
@@ -131,19 +142,20 @@ function App() {
     }
 
     const handleLoginUser = (authInfo) => {
-        // loginUser(authInfo.email, authInfo.password)
-        //     .then((data) => {
-        //         localStorage.setItem('accessToken', data.accessToken);
-        //         localStorage.setItem('refreshToken', data.refreshToken);
-        //         console.log(data);
-        //         navigate('/meetings', {replace: true})
-        //     })
-        //     .catch(err => {
-        //         console.log(`Ошибка...: ${err}`);
-        //         setAuthMessage(authMessageFailure);
-        //         setInfoTooltipPopupState(true);
-        //         setAnyPopupState(true);
-        //     })
+        loginUser(authInfo.email, authInfo.password)
+            .then((data) => {
+                setLoggedIn(true);
+                localStorage.setItem('accessToken', data.accessToken);
+                localStorage.setItem('refreshToken', data.refreshToken);
+                console.log(data);
+                navigate('/meeting-list', {replace: true})
+            })
+            .catch(err => {
+                console.log(`Ошибка...: ${err}`);
+                setAuthMessage(authMessageFailure);
+                setInfoTooltipPopupState(true);
+                setAnyPopupState(true);
+            })
     }
 
     const handleChangeProfile = (user) => {
@@ -192,22 +204,27 @@ function App() {
         <div className='page'>
            <CurrentUserContext.Provider value={currentUser}>
                <CurrentCardsContext.Provider value={currentCards}>
-                   <Header className="App-header" />
+                   <Header className="App-header" loggedIn={isLoggedIn}/>
                    <main className='content'>
                        <Routes>
                            <Route path='/*' element={<Navigate to='/home' replace={true}/>}/>
                            <Route path='/home' element={<MainPage creators={users}/>}/>
                            <Route path='/sign-up' element={<Register />}/>
                            <Route path='/sign-in' element={<Login onRecoveryClick={handleRecoveryPasswordClick} onSubmit={handleLoginUser}/>}/>
-                           <Route path='/profile' element={<Profile userInfo={currentUser} userCards={currentCards}
-                                onCardClick={handleCardClick} isAdmin={isAdmin}/>}/>
-                           <Route path='/meeting-list' element={<MeetingList cards={currentCards} onCardClick={handleCardClick}/>}/>
-                           <Route path='profile/personal-info' element={<PersonalInfo onChange={handleChangeProfile}/>}/>
-                           <Route path='/profile/users-list' element={<UsersList users={users} onClick={handleEditUserClick} isAdmin={isAdmin}/>}/>
+                           {/*<Route path='/profile' element={<Profile userInfo={currentUser} userCards={currentCards}*/}
+                           {/*       onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut}/>}/>*/}
+                           <Route path='/profile' element={<ProtectedRouteElement element={Profile} userInfo={currentUser} userCards={currentCards} o
+                                     onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
+                           <Route path='/meeting-list' element={<ProtectedRouteElement element={MeetingList}
+                                     cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn}/>}/>
+                           <Route path='profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
+                                     onChange={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
+                           <Route path='/profile/users-list' element={<ProtectedRouteElement element={UsersList} users={users}
+                                     onClick={handleEditUserClick} loggedIn={isAdmin} isAdmin={isAdmin}/>}/>
                            <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
                            <Route path='/meeting/:id'
-                                  element={<Meeting meetings={currentCards}
-                                                    onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}/>}/>
+                                  element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
+                                  onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick} loggedIn={isLoggedIn}/>}/>
                        </Routes>
                    </main>
                    <DescriptionPopup isOpen={isDescriptionPopupOpen} card={selectedCard} onClose={closeAllPopups}

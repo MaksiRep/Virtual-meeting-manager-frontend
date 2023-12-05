@@ -34,7 +34,8 @@ function UserPopup(props) {
 
     return(
         <PopupWithForm title="Изменить данные пользователя" name="email" button={props.btnMessage} isOpen={props.isOpen}
-                       onClose={props.onClose} onSubmit={handleSubmit} onOverlayClose={props.onOverlayClose}>
+                       onClose={props.onClose} onSubmit={handleSubmit} onOverlayClose={props.onOverlayClose}
+                       exitButton={'user-exit-button'}>
             <input className='form-auth__input' type='email' placeholder='Email' id='email-input' name='email'
                    required minLength="2" maxLength="40" ref={emailRef}/>
             <input className='form-auth__input' type='text' placeholder='Имя' ref={nameRef}
