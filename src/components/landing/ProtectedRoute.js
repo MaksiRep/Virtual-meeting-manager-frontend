@@ -1,9 +1,10 @@
 import React from "react";
-import {Navigate} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
 
 const ProtectedRouteElement = ({element: Component, ...props}) => {
+    const location = useLocation();
     return(
-        props.loggedIn ? <Component {...props} /> : <Navigate to='/sign-in' replace />
+        props.loggedIn ? <Component {...props} /> : <Navigate to='/sign-in' replace state={{from: location}}/>
     )
 }
 

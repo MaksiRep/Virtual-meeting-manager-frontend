@@ -18,7 +18,7 @@ class Api {
             {
                 method: 'POST',
                 headers: {
-                    authorization: jwt,
+                    authorization: `bearer ${jwt}`,
                     'Content-Type': 'application/json'
                 }})
             .then((res) => {
@@ -30,7 +30,7 @@ class Api {
         return fetch(`${this._baseUrl}/Users/getCurrentUser`,
             {
                 headers: {
-                    authorization: jwt,
+                    authorization: `bearer ${jwt}`,
                     'Content-Type': 'application/json'
                 }})
             .then((res) => {
@@ -42,7 +42,7 @@ class Api {
         return fetch(`${this._baseUrl}/cards`, {
             method: 'POST',
             headers: {
-                authorization: jwt,
+                authorization: `bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -59,7 +59,7 @@ class Api {
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',
             headers: {
-                authorization: jwt,
+                authorization: `bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -76,7 +76,7 @@ class Api {
         return fetch(`${this._baseUrl}/cards/${id}`, {
             method: 'DELETE',
             headers: {
-                authorization: jwt,
+                authorization: `bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
         })
