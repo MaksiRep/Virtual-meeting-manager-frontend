@@ -7,7 +7,10 @@ function Card (props) {
 
     const currentUser = React.useContext(CurrentUserContext);
 
-    // const willGo = props.card.members.some(i => i._id === currentUser._id);
+    const getDate = (date) => {
+        const dateTemp = date.split('-');
+        return dateTemp[2].slice(0, 2) + '.' + dateTemp[1] + '.' + dateTemp[0].slice(-2);
+    }
 
     const handleClick = () => {
         props.onCardClick(props.card);
@@ -22,9 +25,9 @@ function Card (props) {
                 </div>
                 <div className="element__will-go-section">
                     <div className='element__date-block'>
-                        <p className='element__date'>{props.card.startDate}</p>
+                        <p className='element__date'>{getDate(props.card.startDate)}</p>
                         {props.card.endDate ? <>
-                            <p className='element__date'>-{props.card.endDate}</p>
+                            <p className='element__date'>-{getDate(props.card.endDate)}</p>
                         </> : <></>}
                     </div>
                     {props.card.willGo && <p className="element__will-go">Вы идёте✓</p>}

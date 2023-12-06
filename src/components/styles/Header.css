@@ -1,7 +1,7 @@
 .header{
     display: flex;
     justify-content: space-between;
-    margin: 2rem auto 1.1rem;
+    margin: 2rem auto 0.7rem;
     width: 100%;
     max-width: 55rem;
     min-height: 4.625rem;

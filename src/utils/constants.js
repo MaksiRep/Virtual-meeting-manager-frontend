@@ -3,7 +3,22 @@ export const recoveryBtn = 'Отправление...';
 export const saveBtnDefault = 'Сохранить';
 export const saveBtn = 'Сохранение...';
 export const editPopupStyle = 'popup-form__container';
-export const baseUrl = 'https://virtual-meeting-manager.af-dev.ru/api'
+export const createMeetingTitle = 'Создание мероприятия';
+export const editMeetingTitle = 'Изменение мероприятия';
+export const baseUrl = 'https://virtual-meeting-manager.af-dev.ru/api';
+export function getDate() {
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const date = (today.getDate() < 10) ? '0' + today.getDate() : today.getDate();
+    return year + '-' + month + '-' + date;
+}
+export const baseMeetingsRequest = {
+    skip: 0,
+    take: 30,
+    minAge: 0,
+    startDate: getDate() + 'T00:00:00.000Z',
+}
 export const authMessageSuccess = {
     img: 'success',
     title: 'Вы успешно зарегистрировались!'

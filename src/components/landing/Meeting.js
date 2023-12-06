@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import '../styles/Meeting.css'
 import personalInfoIcon from '../../images/private-info.png';
 import pencilIcon from '../../images/pencil.png'
@@ -7,10 +7,14 @@ import {CurrentCardsContext} from "../../contexts/CurrentCardsContext";
 
 function Meeting(props) {
 
+    const [currentMeeting, setCurrentMeeting] = React.useState({});
     let {id} = useParams();
-    id = Number(id);
     const currentMeetings = React.useContext(CurrentCardsContext);
-    const currentMeeting = currentMeetings.find(f => f._id=== id);
+
+    React.useEffect(() => {
+        id = Number(id);
+        setCurrentMeeting(currentMeetings.find(f => f.id=== id));
+    })
 
     function handleInfoClick() {
         props.onContactInfoClick({

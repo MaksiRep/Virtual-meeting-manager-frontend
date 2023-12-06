@@ -13,42 +13,67 @@ class Api {
         return res.json();
     }
 
-    getInitialMeetings(jwt){
-        return fetch(`${this._baseUrl}/Meetings/getMeetingList`,
+    // getInitialMeetings(base, jwt){
+    //     return fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
+    //         {
+    //             method: 'POST',
+    //             headers: {
+    //                 authorization: `bearer ${jwt}`,
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(base)
+    //         })
+    //         .then((res) => {
+    //             return this._getResponseData(res)
+    //         });
+    // }
+
+    async getInitialMeetings(base, jwt){
+        const response = (await fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
             {
                 method: 'POST',
                 headers: {
                     authorization: `bearer ${jwt}`,
                     'Content-Type': 'application/json'
-                }})
-            .then((res) => {
-                return this._getResponseData(res)
-            });
+                },
+                body: JSON.stringify(base)
+            }))
+        return this._getResponseData(response);
     }
 
-    getUserInfo(jwt){
-        return fetch(`${this._baseUrl}/Users/getCurrentUser`,
+    async getCurrentUser(jwt){
+        const response = (await fetch(`${this._baseUrl}/Users/getCurrentUser`,
             {
                 headers: {
                     authorization: `bearer ${jwt}`,
                     'Content-Type': 'application/json'
-                }})
-            .then((res) => {
-                return this._getResponseData(res)
-            });
+                }}))
+        return this._getResponseData(response)
     }
 
-    postNewCard(name, link, jwt) {
-        return fetch(`${this._baseUrl}/cards`, {
+    async getUserInfo(id, jwt) {
+        const response = (await fetch(`${this._baseUrl}/Users/getUserInfo`,
+            {
+                method: 'POST',
+                headers: {
+                    authorization: `bearer ${jwt}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: id
+                })
+            }))
+        return this._getResponseData(response)
+    }
+
+    createMeeting(meeting, jwt) {
+        return fetch(`${this._baseUrl}/Meetings/createMeeting`, {
             method: 'POST',
             headers: {
                 authorization: `bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                name: name,
-                link: link
-            })
+            body: JSON.stringify(meeting)
         })
             .then((res) => {
                 return this._getResponseData(res);

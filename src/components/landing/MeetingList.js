@@ -10,7 +10,7 @@ function MeetingList(props) {
     return(
         <section className='elements'>
             {props.cards.map((card) => (
-                <Card key={card._id} card={card} onCardClick={props.onCardClick}></Card>
+                <Card key={card.id} card={card} onCardClick={props.onCardClick}></Card>
             ))}
         </section>
     );

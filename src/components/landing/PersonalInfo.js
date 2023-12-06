@@ -14,12 +14,11 @@ function PersonalInfo(props) {
     const [birthDate, setBirthDate] = useState('');
 
     useEffect(() => {
-        setName(currentUser.name);
-        setSurname(currentUser.surname);
+        setName(currentUser.firstName);
+        setSurname(currentUser.lastName);
         setEmail(currentUser.email);
-        setSex(currentUser.sex);
+        setSex(currentUser.gender);
         setBirthDate(currentUser.birthDate);
-        console.log(currentUser.birthDate);
     }, [currentUser]);
 
     function handleChangeName(e) {

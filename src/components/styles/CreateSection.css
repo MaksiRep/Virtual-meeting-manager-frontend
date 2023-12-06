@@ -1,0 +1,38 @@
+.joint-section{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 55rem;
+    justify-content: space-between;
+    min-height: 4.625rem;
+    margin: 0 auto 0.4rem;
+}
+
+.joint-section__filter{
+    display: flex;
+    width: 60%;
+}
+
+.joint-section__create{
+    display: flex;
+}
+
+.joint-section__add-button{
+    margin-right: 1rem;
+    align-self: center;
+    width: 11rem;
+    min-width: 3.125rem;
+    height: 3.125rem;
+    background-color: #000000;
+    background-image: url(../../images/add-button.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 2px;
+    border: #FFFFFF 2px solid;
+    cursor:pointer;
+    transition: opacity 0.3s linear;
+}
+
+.joint-section__add-button:hover{
+    opacity: 0.8;
+}

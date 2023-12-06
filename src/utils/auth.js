@@ -41,13 +41,17 @@ export function loginUser(email, password) {
 
 
 
-export function checkToken(jwt) {
-    return fetch(`${baseUrl}/Auth/`,{
-        method: 'GET',
+export function refreshToken(access, refresh) {
+    return fetch(`${baseUrl}/Auth/refreshToken`,{
+        method: 'POST',
         headers: {
             "Content-Type": "application/json",
-            "Authorization" : `Bearer ${jwt}`
-        }
+            "Authorization" : `Bearer ${access}`
+        },
+        body: JSON.stringify({
+            accessToken: access,
+            refreshToken: refresh
+        })
     })
         .then((res) => {
             return getResponseData(res);

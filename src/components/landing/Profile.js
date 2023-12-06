@@ -15,14 +15,14 @@ function Profile(props) {
         props.handleLogOut();
     }
 
-    const handleUserCards = (cards) => {
-        return cards.filter((card) => card.willGo === true);
-    }
+    // const handleUserCards = (cards) => {
+    //     return cards.filter((card) => card.willGo === true);
+    // }
 
     return (
         <div className='profile'>
             <div className='profile__info'>
-                <h3 className='profile__greetings'>Здраствуйте, {props.userInfo.name}!</h3>
+                <h3 className='profile__greetings'>Здраствуйте, {props.userInfo.firstName}!</h3>
                 <Link to='personal-info' className='profile__personal-info'>
                     <img className='profile__personal-icon' alt='' src={personalInfoIcon}/>
                     <p className='profile__personal-title'>Личная информация</p>
@@ -37,7 +37,7 @@ function Profile(props) {
                 </Link>
             </div>
             <h2 className='profile__user-cards'>Мероприятия, на которые вы идёте:</h2>
-            <MeetingList cards={handleUserCards(currentCards)} onCardClick={props.onCardClick}/>
+            <MeetingList cards={currentCards} onCardClick={props.onCardClick}/>
         </div>
     );
 }

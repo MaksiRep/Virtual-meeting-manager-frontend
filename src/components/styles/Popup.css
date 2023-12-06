@@ -55,7 +55,13 @@
 }
 
 .popup-form__container{
-    max-width: 40rem;
+    max-width: 35rem;
+    max-height: 87vh;
+    overflow: auto;
+}
+
+::-webkit-scrollbar {
+    width: 0;
 }
 
 .popup__scroll{
