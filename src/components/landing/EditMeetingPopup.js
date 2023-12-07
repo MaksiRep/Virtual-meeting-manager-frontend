@@ -48,10 +48,10 @@ function EditMeetingPopup(props) {
     function handleSubmit(e) {
         e.preventDefault();
         props.onSubmit({
-            Name: titleRef.current.value,
+            name: titleRef.current.value,
             description: fullDescriptionRef.current.value,
             startDate: startDateRef.current.value + 'T00:00:00.000Z',
-            endDate: endDateRef.current.value ? endDateRef.current.value + 'T23:59:59.999Z' : '',
+            endDate: endDateRef.current.value ? endDateRef.current.value + 'T23:59:59.999Z' : startDateRef.current.value + 'T23:59:59.999Z',
             // imageUrl: imageRef.current.value,
             maxUsers: Number(peopleNumRef.current.value),
             minAge: ageRestrRef.current.value ? ageRestrRef.current.value : null,

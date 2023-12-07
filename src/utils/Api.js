@@ -13,23 +13,8 @@ class Api {
         return res.json();
     }
 
-    // getInitialMeetings(base, jwt){
-    //     return fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
-    //         {
-    //             method: 'POST',
-    //             headers: {
-    //                 authorization: `bearer ${jwt}`,
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(base)
-    //         })
-    //         .then((res) => {
-    //             return this._getResponseData(res)
-    //         });
-    // }
-
     async getInitialMeetings(base, jwt){
-        const response = (await fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
+        const response = await fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
             {
                 method: 'POST',
                 headers: {
@@ -37,22 +22,22 @@ class Api {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(base)
-            }))
+            });
         return this._getResponseData(response);
     }
 
     async getCurrentUser(jwt){
-        const response = (await fetch(`${this._baseUrl}/Users/getCurrentUser`,
+        const response = await fetch(`${this._baseUrl}/Users/getCurrentUser`,
             {
                 headers: {
                     authorization: `bearer ${jwt}`,
                     'Content-Type': 'application/json'
-                }}))
-        return this._getResponseData(response)
+                }});
+        return this._getResponseData(response);
     }
 
     async getUserInfo(id, jwt) {
-        const response = (await fetch(`${this._baseUrl}/Users/getUserInfo`,
+        const response = await fetch(`${this._baseUrl}/Users/getUserInfo`,
             {
                 method: 'POST',
                 headers: {
@@ -62,22 +47,20 @@ class Api {
                 body: JSON.stringify({
                     userId: id
                 })
-            }))
-        return this._getResponseData(response)
+            });
+        return this._getResponseData(response);
     }
 
-    createMeeting(meeting, jwt) {
-        return fetch(`${this._baseUrl}/Meetings/createMeeting`, {
+    async createMeeting(meeting, jwt) {
+        const response = await fetch(`${this._baseUrl}/Meetings/createMeeting`, {
             method: 'POST',
             headers: {
                 authorization: `bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(meeting)
-        })
-            .then((res) => {
-                return this._getResponseData(res);
-            });
+        });
+        return this._getResponseData(response);
     }
 
     setUserInfo(name, info, jwt){

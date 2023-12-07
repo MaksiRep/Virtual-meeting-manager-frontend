@@ -12,6 +12,8 @@ function Card (props) {
         return dateTemp[2].slice(0, 2) + '.' + dateTemp[1] + '.' + dateTemp[0].slice(-2);
     }
 
+    const equalDate = getDate(props.card.startDate) === getDate(props.card.endDate);
+
     const handleClick = () => {
         props.onCardClick(props.card);
     }
@@ -26,7 +28,7 @@ function Card (props) {
                 <div className="element__will-go-section">
                     <div className='element__date-block'>
                         <p className='element__date'>{getDate(props.card.startDate)}</p>
-                        {props.card.endDate ? <>
+                        {!equalDate ? <>
                             <p className='element__date'>-{getDate(props.card.endDate)}</p>
                         </> : <></>}
                     </div>

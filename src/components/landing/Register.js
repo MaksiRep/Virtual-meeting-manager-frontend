@@ -16,12 +16,12 @@ function Register(props) {
         e.preventDefault()
         if(passwordRef.current.value === repeatPasswordRef.current.value)
             props.onSubmit({
-                email: emailRef,
-                password: passwordRef,
-                name: nameRef,
-                surname: surnameRef,
-                sex: sexRef,
-                dateBirth: dateBirthRef
+                email: emailRef.current.value,
+                password: passwordRef.current.value,
+                firstName: nameRef.current.value,
+                lastName: surnameRef.current.value,
+                gender: sexRef.current.value,
+                birthDate: dateBirthRef.current.value
             })
     }
 

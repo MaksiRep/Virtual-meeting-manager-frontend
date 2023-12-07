@@ -1,32 +1,34 @@
 import React, {useEffect, useState} from "react";
 import './App.css';
-import {Route, Routes, Navigate, useNavigate, useLocation, useHistory} from 'react-router-dom'
+import {Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
 import Header from "./landing/Header";
 import Login from "./landing/Login";
 import Register from "./landing/Register";
-import MeetingList from "./landing/MeetingList";
 import DescriptionPopup from "./landing/DescriptionPopup";
 import Profile from "./landing/Profile";
 import Main from "./landing/Main";
 import {
-    authMessageSuccess, authMessageFailure, recoveryBtnDefault,
-    recoveryBtn, saveBtn, saveBtnDefault, editPopupStyle,
-    editMeetingTitle, createMeetingTitle, baseMeetingsRequest
-}from "../utils/constants";
+    authMessageFailure,
+    authMessageSuccess,
+    baseMeetingsRequest,
+    createMeetingTitle,
+    editMeetingTitle,
+    editPopupStyle,
+    recoveryBtnDefault,
+    saveBtn,
+    saveBtnDefault
+} from "../utils/constants";
 import api from "../utils/Api";
-import {initialCards} from "../utils/initialCards";
-import {userInfo} from "../utils/initialCurrentUser";
 import {initialUsers} from "../utils/initialUsers";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 import {CurrentCardsContext} from "../contexts/CurrentCardsContext";
-import {loginUser, refreshToken} from "../utils/auth";
+import {loginUser, refreshToken, registerUser} from "../utils/auth";
 import PersonalInfo from "./landing/PersonalInfo";
 import UsersList from "./landing/UsersList";
 import ForgottenPasswordPopup from "./landing/ForgottenPasswordPopup";
 import RecoveryPassword from "./landing/RecoveryPassword";
 import Meeting from "./landing/Meeting";
 import ContactInfoPopup from "./landing/ContactInfoPopup";
-import contactInfoPopup from "./landing/ContactInfoPopup";
 import EditMeetingPopup from "./landing/EditMeetingPopup";
 import InfoTooltip from "./landing/InfoTooltip";
 import UserPopup from "./landing/UserPopup";
@@ -88,6 +90,7 @@ function App() {
     useEffect(() => {
         if(isAccessTokenExist()){
             setLoggedIn(true);
+            console.log(localStorage.getItem('accessToken'));
             // refreshToken(localStorage.getItem('accessToken'), localStorage.getItem('refreshToken'))
             //     .then((data) => {
             //         localStorage.setItem('accessToken', data.accessToken);
@@ -105,7 +108,7 @@ function App() {
                 setCurrentUser(userInfo);
                 const cardsData = await api.getInitialMeetings(baseMeetingsRequest, localStorage.getItem('accessToken'));
                 setCurrentCards(cardsData.items);
-                console.log(currentCards);
+                console.log(cardsData);
             }
             fetchData()
                 .catch(err => console.log(err));
@@ -123,6 +126,7 @@ function App() {
     //     setCurrentCards(initialCards);
     // },[])
     //
+    
     useEffect(() => {
             setUsers(initialUsers);
     }, [])
@@ -176,24 +180,42 @@ function App() {
             closeAllPopups();
     }
 
-    const handleRegisterSubmit = (data) => {
+    const handleRegisterSubmit = async (data) => {
         console.log(data);
+        try {
+            const tokens = await registerUser(data);
+            console.log(tokens);
+            setAuthMessage(authMessageSuccess);
+            setInfoTooltipPopupState(true);
+            setAnyPopupState(true);
+            setLoggedIn(true);
+            localStorage.setItem('accessToken', tokens.accessToken);
+            localStorage.setItem('refreshToken', tokens.refreshToken);
+            navigate('/sign-in', {replace: true})
+        }
+        catch (err) {
+            console.log(err);
+            setAuthMessage(authMessageFailure);
+            setInfoTooltipPopupState(true);
+            setAnyPopupState(true);
+        }
     }
 
-    const handleLoginUser = (authInfo) => {
-        loginUser(authInfo.email, authInfo.password)
-            .then((data) => {
-                setLoggedIn(true);
-                localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('refreshToken', data.refreshToken);
-                navigate('/meeting-list', {replace: true})
-            })
-            .catch(err => {
-                console.log(`Ошибка...: ${err}`);
-                setAuthMessage(authMessageFailure);
-                setInfoTooltipPopupState(true);
-                setAnyPopupState(true);
-            })
+    const handleLoginUser = async (authInfo) => {
+        console.log(authInfo);
+        try {
+            const tokens = await loginUser(authInfo);
+            localStorage.setItem('accessToken', tokens.accessToken);
+            localStorage.setItem('refreshToken', tokens.refreshToken);
+            setLoggedIn(true);
+            navigate('/meeting-list', {replace: true})
+        }
+        catch (err) {
+            console.log(err);
+            setAuthMessage(authMessageFailure);
+            setInfoTooltipPopupState(true);
+            setAnyPopupState(true);
+        }
     }
 
     const handleChangeProfile = (user) => {
@@ -206,20 +228,20 @@ function App() {
         closeAllPopups();
     }
 
-    const handleCreateMeeting = (meeting) => {
+    const handleCreateMeeting = async (meeting) => {
         console.log(meeting);
         setEditBtnMessage(saveBtn);
-        api.createMeeting(meeting, localStorage.getItem('accessToken'))
-            .then(() => {
-                setCurrentCards(state => [meeting, ...state])
-                closeAllPopups();
-            })
-            .catch((err)=>{
-                console.log(`Ошибка...: ${err}`);
-            })
-            .finally(() => {
-                setEditBtnMessage(saveBtnDefault);
-            })
+        try {
+            meeting.id = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
+            setCurrentCards(state => [meeting, ...state])
+            closeAllPopups();
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setEditBtnMessage(saveBtnDefault);
+        }
     }
 
     const handleChangeMeeting = (meeting) => {
@@ -239,6 +261,7 @@ function App() {
     const handleLogOut = () => {
         localStorage.clear();
         setLoggedIn(false);
+        setAdminStatus(false);
         navigate('/sign-in', {replace: true});
         setCurrentUser({});
         setCurrentCards([]);

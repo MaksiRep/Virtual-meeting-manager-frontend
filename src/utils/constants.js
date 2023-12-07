@@ -16,8 +16,6 @@ export function getDate() {
 export const baseMeetingsRequest = {
     skip: 0,
     take: 30,
-    minAge: 0,
-    startDate: getDate() + 'T00:00:00.000Z',
 }
 export const authMessageSuccess = {
     img: 'success',
