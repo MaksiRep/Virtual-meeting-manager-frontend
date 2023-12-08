@@ -125,7 +125,7 @@ function App() {
     // useEffect(() => {
     //     setCurrentCards(initialCards);
     // },[])
-    //
+
     
     useEffect(() => {
             setUsers(initialUsers);
@@ -228,12 +228,18 @@ function App() {
         closeAllPopups();
     }
 
-    const handleCreateMeeting = async (meeting) => {
+    const handleCreateMeeting = async (meeting, img) => {
         console.log(meeting);
+        console.log(img);
         setEditBtnMessage(saveBtn);
         try {
-            meeting.id = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
-            setCurrentCards(state => [meeting, ...state])
+            const meetingId = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
+            meeting.id = meetingId;
+            console.log(meetingId.meetingId);
+            await api.updateMeetingImage(meetingId.meetingId, img, localStorage.getItem('accessToken'));
+            meeting.imageUrl = img;
+            console.log(meeting);
+            setCurrentCards(state => [meeting, ...state]);
             closeAllPopups();
         }
         catch (err) {

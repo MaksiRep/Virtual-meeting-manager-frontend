@@ -63,6 +63,21 @@ class Api {
         return this._getResponseData(response);
     }
 
+    async updateMeetingImage(id, url, jwt) {
+        const response = await fetch(`${this._baseUrl}/Meetings/updateMeetingImage`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                meetingId: id,
+                imageUrl: url
+            })
+        });
+        return response;
+    }
+
     setUserInfo(name, info, jwt){
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',
@@ -80,7 +95,7 @@ class Api {
             });
     }
 
-    deleteCard(id, jwt) {
+    deleteMeeting(id, jwt) {
         return fetch(`${this._baseUrl}/cards/${id}`, {
             method: 'DELETE',
             headers: {

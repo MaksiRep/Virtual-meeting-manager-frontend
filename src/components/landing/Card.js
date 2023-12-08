@@ -20,7 +20,7 @@ function Card (props) {
 
     return(
         <article className="element">
-            <img className="element__image" alt={props.card.name} src={props.card.link} onClick={handleClick}/>
+            <img className="element__image" alt={props.card.name} src={props.card.imageUrl} onClick={handleClick}/>
             <div className="element__info">
                 <div className='element__details'>
                     <h3 className="element__title">{props.card.name}</h3>
@@ -28,7 +28,7 @@ function Card (props) {
                 <div className="element__will-go-section">
                     <div className='element__date-block'>
                         <p className='element__date'>{getDate(props.card.startDate)}</p>
-                        {!equalDate ? <>
+                        {(!equalDate) ? <>
                             <p className='element__date'>-{getDate(props.card.endDate)}</p>
                         </> : <></>}
                     </div>

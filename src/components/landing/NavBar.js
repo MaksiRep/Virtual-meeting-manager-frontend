@@ -7,11 +7,11 @@ function NavBar(props) {
     const location = useLocation();
 
     const authPath = () => {
-        return location.pathname === '/sign-up' ?
-            <NavLink to='/sign-in' className={({isActive}) => `menu__link 
-                ${isActive ? "menu__link_active" : ""}`}>Войти</NavLink> :
+        return location.pathname === '/sign-in' ?
             <NavLink to='/sign-up' className={({isActive}) => `menu__link 
-                ${isActive ? "menu__link_active" : ""}`}>Регистрация</NavLink>
+                ${isActive ? "menu__link_active" : ""}`}>Регистрация</NavLink> :
+            <NavLink to='/sign-in' className={({isActive}) => `menu__link 
+                ${isActive ? "menu__link_active" : ""}`}>Войти</NavLink>
     }
 
     return(

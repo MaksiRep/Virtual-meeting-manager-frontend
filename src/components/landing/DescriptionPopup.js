@@ -11,7 +11,7 @@ function DescriptionPopup(props) {
                 <button className="popup__exit-button" type="button" onClick={props.onClose} />
                 <h2 className="popup__title">{props.card.name}</h2>
                 <div className='popup__info'>
-                    <img className='popup__image' src={props.card.link} alt=''/>
+                    <img className='popup__image' src={props.card.imageUrl} alt=''/>
                     <div className='popup__details'>
                         <p className='popup__description'>{props.card.shortDescription}</p>
                         <Link to={'/meeting/' + props.card.id} onClick={props.onClose}

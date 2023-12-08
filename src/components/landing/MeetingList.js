@@ -5,8 +5,6 @@ import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
 function MeetingList(props) {
 
-    const currentUser = React.useContext(CurrentUserContext);
-
     return(
         <section className='elements'>
             {props.cards.map((card) => (

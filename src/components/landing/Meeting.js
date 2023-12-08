@@ -14,7 +14,7 @@ function Meeting(props) {
     React.useEffect(() => {
         id = Number(id);
         setCurrentMeeting(currentMeetings.find(f => f.id=== id));
-    })
+    }, [])
 
     function handleInfoClick() {
         props.onContactInfoClick({
@@ -34,9 +34,9 @@ function Meeting(props) {
                     <h3 className='meeting__title'>{currentMeeting.name}</h3>
                     <div className='meeting__columns'>
                         <div className='meeting__info'>
-                            <img className='meeting__img' src={currentMeeting.link} alt={currentMeeting.name}/>
+                            <img className='meeting__img' src={currentMeeting.imageUrl} alt={currentMeeting.name}/>
                             <div className='meeting__owner-info'>
-                                <p className='meeting__owner'>Организатор: {currentMeeting.owner.name}</p>
+                                <p className='meeting__owner'>Организатор: {}</p>
                                 <div className='contact-info' onClick={handleInfoClick}>
                                     <p className='contact-info__text'>Контактная информация</p>
                                     <img className='contact-info__img' src={personalInfoIcon}/>

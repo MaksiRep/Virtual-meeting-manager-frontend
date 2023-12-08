@@ -52,12 +52,11 @@ function EditMeetingPopup(props) {
             description: fullDescriptionRef.current.value,
             startDate: startDateRef.current.value + 'T00:00:00.000Z',
             endDate: endDateRef.current.value ? endDateRef.current.value + 'T23:59:59.999Z' : startDateRef.current.value + 'T23:59:59.999Z',
-            // imageUrl: imageRef.current.value,
             maxUsers: Number(peopleNumRef.current.value),
             minAge: ageRestrRef.current.value ? ageRestrRef.current.value : null,
             gender: sexRestrRef.current.value ? sexRestrRef.current.value : null,
             shortDescription: shortDescriptionRef.current.value,
-        });
+        }, imageRef.current.value);
     }
 
     return(
