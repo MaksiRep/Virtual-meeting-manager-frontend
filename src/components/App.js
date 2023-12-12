@@ -34,6 +34,7 @@ import InfoTooltip from "./landing/InfoTooltip";
 import UserPopup from "./landing/UserPopup";
 import MainPage from "./landing/MainPage";
 import ProtectedRouteElement from "./landing/ProtectedRoute";
+import Loader from "./landing/Loader";
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
@@ -49,12 +50,14 @@ function App() {
     const [isInfoTooltipPopupOpen, setInfoTooltipPopupState] = useState(false);
     const [authMessage, setAuthMessage] = useState({});
     const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
-    const [selectedCard, setSelectedCard] = useState({});
+    const [openedCard, setOpenedCard] = useState({});
+    const [selectedMeeting, setSelectedMeeting] = useState({});
     const [selectedEditCard, setSelectedEditCard] = useState({});
     const [selectedUser, setSelectedUser] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
-    const [isLoggedIn, setLoggedIn] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(true);
     const [isAdmin, setAdminStatus] = useState(false);
+    const [isLoaded, setLoadedState] = useState(false);
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
     const [editBtnMessage, setEditBtnMessage] = useState(saveBtnDefault);
     const [routeState, setRouteState] = useState({});
@@ -89,31 +92,51 @@ function App() {
 
     useEffect(() => {
         if(isAccessTokenExist()){
-            setLoggedIn(true);
-            console.log(localStorage.getItem('accessToken'));
-            // refreshToken(localStorage.getItem('accessToken'), localStorage.getItem('refreshToken'))
-            //     .then((data) => {
-            //         localStorage.setItem('accessToken', data.accessToken);
-            //         localStorage.setItem('refreshToken', data.refreshToken);
-            //     })
-        }
-    },[])
-
-    useEffect(() => {
-        if(isAccessTokenExist()){
-            const fetchData = async () => {
+            const fetchUser = async () => {
                 const userId = await api.getCurrentUser(localStorage.getItem('accessToken'));
                 setUserRoles(userId);
                 const userInfo = await api.getUserInfo(userId.id, localStorage.getItem('accessToken'));
                 setCurrentUser(userInfo);
+            }
+
+            const fetchCards = async () => {
                 const cardsData = await api.getInitialMeetings(baseMeetingsRequest, localStorage.getItem('accessToken'));
                 setCurrentCards(cardsData.items);
-                console.log(cardsData);
             }
-            fetchData()
-                .catch(err => console.log(err));
+
+            if (isLoggedIn) {
+                fetchUser()
+                    .then(() => setLoadedState(true))
+                    .catch(err => {
+                        if (err === 'Ошибка: 401') {
+                            handleRefreshToken()
+                                .then(() => {
+                                    return fetchUser()
+                                })
+                                .catch(error => {
+                                    console.log(error);
+                                    setLoggedIn(false);
+                                })
+                                .finally(() => setLoadedState(true))
+                        } else
+                            console.log(err);
+                    })
+                fetchCards()
+                    .catch(err => console.log(err))
+            }
+        }
+        else {
+            setLoggedIn(false);
+            setLoadedState(true);
         }
     }, [isLoggedIn]);
+
+    const handleRefreshToken = async () => {
+        const tokens = await refreshToken(localStorage.getItem('accessToken'),
+            localStorage.getItem('refreshToken'));
+        localStorage.setItem('accessToken', tokens.accessToken);
+        localStorage.setItem('refreshToken', tokens.refreshToken);
+    }
 
     useEffect(() => {
         if(userRoles.roles)
@@ -142,7 +165,7 @@ function App() {
     },[isAnyPopupOpen]);
 
     const handleCardClick = (card) => {
-        setSelectedCard(card);
+        setOpenedCard(card);
         setDescriptionPopupState(true);
         setAnyPopupState(true);
     }
@@ -153,7 +176,7 @@ function App() {
     }
 
     const handleContactInfoClick = (info) => {
-        setContactInfo(info);
+        setContactInfo(selectedMeeting);
         setContactInfoPopupState(true);
         setAnyPopupState(true);
     }
@@ -180,11 +203,21 @@ function App() {
             closeAllPopups();
     }
 
+    const handleGetCurrentMeeting = async (id) => {
+        try {
+            const data = await api.getCurrentMeeting(id, localStorage.getItem('accessToken'))
+            setSelectedMeeting(data);
+            console.log(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
     const handleRegisterSubmit = async (data) => {
         console.log(data);
         try {
             const tokens = await registerUser(data);
-            console.log(tokens);
             setAuthMessage(authMessageSuccess);
             setInfoTooltipPopupState(true);
             setAnyPopupState(true);
@@ -204,7 +237,8 @@ function App() {
     const handleLoginUser = async (authInfo) => {
         console.log(authInfo);
         try {
-            const tokens = await loginUser(authInfo);
+            const tokens = await loginUser(authInfo)
+                .then();
             localStorage.setItem('accessToken', tokens.accessToken);
             localStorage.setItem('refreshToken', tokens.refreshToken);
             setLoggedIn(true);
@@ -288,29 +322,35 @@ function App() {
         <div className='page'>
            <CurrentUserContext.Provider value={currentUser}>
                <CurrentCardsContext.Provider value={currentCards}>
-                   <Header className="App-header" loggedIn={isLoggedIn}/>
+                   <Header className="App-header" loggedIn={isLoggedIn} loaded={isLoaded}/>
                    <main className='content'>
-                       <Routes>
-                           <Route path='/*' element={<Navigate to='/home' replace />}/>
-                           <Route path='/home' element={<MainPage creators={users}/>}/>
-                           <Route path='/sign-up' element={(!isLoggedIn) ? <Register onSubmit={handleRegisterSubmit}/>  : <Navigate to='/profile' replace />}/>
-                           <Route path='/sign-in' element={(!isLoggedIn) ? <Login onRecoveryClick={handleRecoveryPasswordClick}
-                                     onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
-                           <Route path='/profile' element={<ProtectedRouteElement element={Profile} userInfo={currentUser} userCards={currentCards} o
-                                     onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
-                           <Route path='/meeting-list' element={<ProtectedRouteElement element={Main} onCreateClick={handleCreateMeetingClick}
-                                     cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn}/>}/>
-                           <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
-                                     onChange={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
-                           <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
-                                     onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
-                           <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
-                           <Route path='/meeting/:id'
-                                  element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
-                                  onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick} loggedIn={isLoggedIn}/>}/>
-                       </Routes>
+                       {
+                           isLoaded ?
+                               <Routes>
+                                   <Route path='/*' element={<Navigate to='/home' replace />}/>
+                                   <Route path='/home' element={<MainPage creators={users}/>}/>
+                                   <Route path='/sign-up' element={(!isLoggedIn) ? <Register onSubmit={handleRegisterSubmit}/>  : <Navigate to='/profile' replace />}/>
+                                   <Route path='/sign-in' element={(!isLoggedIn) ? <Login onRecoveryClick={handleRecoveryPasswordClick}
+                                                                                          onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
+                                   <Route path='/profile' element={<ProtectedRouteElement element={Profile} userInfo={currentUser} userCards={currentCards} o
+                                                                                          onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
+                                   <Route path='/meeting-list' element={<ProtectedRouteElement element={Main} onCreateClick={handleCreateMeetingClick}
+                                                                                               cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn}/>}/>
+                                   <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
+                                                                                                        onChange={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
+                                   <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
+                                                                                                     onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
+                                   <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
+                                   <Route path='/meeting/:id'
+                                          element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
+                                                    onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
+                                                    loggedIn={isLoggedIn} meetingInfo={selectedMeeting} getInfo={handleGetCurrentMeeting}/>}/>
+                               </Routes>
+                               :
+                               <Loader />
+                       }
                    </main>
-                   <DescriptionPopup isOpen={isDescriptionPopupOpen} card={selectedCard} onClose={closeAllPopups}
+                   <DescriptionPopup isOpen={isDescriptionPopupOpen} card={openedCard} onClose={closeAllPopups}
                         onOverlayClose={handleOverlayClose}/>
                    <ForgottenPasswordPopup isOpen={isRecoveryPasswordPopupOpen} btnMessage={recoveryBtnMessage}
                         onClose={closeAllPopups} onSubmit={handleRecoveryPassword} onOverlayClose={handleOverlayClose}/>

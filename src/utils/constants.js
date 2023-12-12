@@ -13,6 +13,10 @@ export function getDate() {
     const date = (today.getDate() < 10) ? '0' + today.getDate() : today.getDate();
     return year + '-' + month + '-' + date;
 }
+export const getDateFormat = (date) => {
+    const dateTemp = date.split('-');
+    return dateTemp[2].slice(0, 2) + '.' + dateTemp[1] + '.' + dateTemp[0].slice(-2);
+}
 export const baseMeetingsRequest = {
     skip: 0,
     take: 30,

@@ -20,7 +20,7 @@ function EditMeetingPopup(props) {
         if(props.meeting){
             titleRef.current.value = props.meeting.name;
             shortDescriptionRef.current.value = props.meeting.shortDescription;
-            fullDescriptionRef.current.value = props.meeting.fullDescription;
+            fullDescriptionRef.current.value = props.meeting.description;
             imageRef.current.value = props.meeting.link;
             startDateRef.current.value = props.meeting.startDate;
             if (props.meeting.endDate)

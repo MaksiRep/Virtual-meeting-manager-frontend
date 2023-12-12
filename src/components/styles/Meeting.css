@@ -19,6 +19,20 @@
 .meeting__info{
     display: flex;
     flex-direction: column;
+    width: min-content;
+}
+
+.meeting__info-columns{
+    display: flex;
+    flex-direction: row;
+}
+
+.meeting__more-info{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    margin-left: 1rem;
+    text-align: center;
 }
 
 .meeting__img{
@@ -57,6 +71,10 @@
     max-height: 100%;
     justify-content: space-between;
     min-width: 50%;
+}
+
+.meeting__info-span{
+    font-weight: bold;
 }
 
 .meeting__description{

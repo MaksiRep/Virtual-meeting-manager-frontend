@@ -1,18 +1,14 @@
 import React from "react";
 import '../styles/Card.css'
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
+import {getDateFormat} from "../../utils/constants";
 
 
 function Card (props) {
 
     const currentUser = React.useContext(CurrentUserContext);
 
-    const getDate = (date) => {
-        const dateTemp = date.split('-');
-        return dateTemp[2].slice(0, 2) + '.' + dateTemp[1] + '.' + dateTemp[0].slice(-2);
-    }
-
-    const equalDate = getDate(props.card.startDate) === getDate(props.card.endDate);
+    const equalDate = getDateFormat(props.card.startDate) === getDateFormat(props.card.endDate);
 
     const handleClick = () => {
         props.onCardClick(props.card);
@@ -27,9 +23,9 @@ function Card (props) {
                 </div>
                 <div className="element__will-go-section">
                     <div className='element__date-block'>
-                        <p className='element__date'>{getDate(props.card.startDate)}</p>
+                        <p className='element__date'>{getDateFormat(props.card.startDate)}</p>
                         {(!equalDate) ? <>
-                            <p className='element__date'>-{getDate(props.card.endDate)}</p>
+                            <p className='element__date'>-{getDateFormat(props.card.endDate)}</p>
                         </> : <></>}
                     </div>
                     {props.card.willGo && <p className="element__will-go">Вы идёте✓</p>}

@@ -15,16 +15,22 @@ function NavBar(props) {
     }
 
     return(
-        <nav className='menu'>
-            {props.loggedIn ?
-                <>
-                    <NavLink to='/meeting-list' className={({isActive}) => `menu__link 
+        <>
+            {
+                props.loaded ?
+                    <nav className='menu'>
+                    {props.loggedIn ?
+                        <>
+                            <NavLink to='/meeting-list' className={({isActive}) => `menu__link 
                     ${isActive ? "menu__link_active" : ""}`}>Мероприятия</NavLink>
-                    <NavLink to='/profile' className={({isActive}) => `menu__link 
+                            <NavLink to='/profile' className={({isActive}) => `menu__link 
                     ${isActive ? "menu__link_active" : ""}`}>Личный кабинет</NavLink>
-                </> : '' }
-            {!props.loggedIn ? authPath() : ''}
-        </nav>
+                        </> : '' }
+                    {!props.loggedIn ? authPath() : ''}
+                </nav> :
+                    <></>
+            }
+        </>
     );
 }
 

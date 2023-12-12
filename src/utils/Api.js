@@ -78,6 +78,20 @@ class Api {
         return response;
     }
 
+    async getCurrentMeeting(id, jwt) {
+        const response = await fetch(`${this._baseUrl}/Meetings/getCurrentMeeting`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                meetingId: id,
+            })
+        });
+        return this._getResponseData(response);
+    }
+
     setUserInfo(name, info, jwt){
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',
