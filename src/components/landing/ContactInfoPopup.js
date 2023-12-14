@@ -1,8 +1,8 @@
 import React from "react";
 import '../styles/Popup.css';
 import '../styles/ContactInfo.css'
-import emailIcon from '../../images/email-icon.png';
-import phoneIcon from '../../images/phone-icon.png';
+import emailIcon from '../../images/person.svg';
+import phoneIcon from '../../images/phone.svg';
 
 function ContactInfoPopup(props) {
 
@@ -14,12 +14,12 @@ function ContactInfoPopup(props) {
                 <h2 className="popup__title">Контактная информация</h2>
                 <div className='popup__info contact-info-block'>
                     <div className='contact-info__line'>
-                        <img className='contact-info__email-img' src={emailIcon} alt='email'/>
-                        <p className='contact-info__email-text'>{props.contactInfo.managerEmail}</p>
+                        <img className='contact-info__name-img' src={emailIcon} alt='email'/>
+                        <p className='contact-name-text'>{props.contactInfo.managerFirstName} {props.contactInfo.managerLastName}</p>
                     </div>
                     <div className='contact-info__line'>
                         <img className='contact-info__phone-img' src={phoneIcon} alt='phone'/>
-                        <p className='contact-info__phone-text'>{}</p>
+                        <p className='contact-info__phone-text'>{props.contactInfo.managerPhone}</p>
                     </div>
                 </div>
             </div>

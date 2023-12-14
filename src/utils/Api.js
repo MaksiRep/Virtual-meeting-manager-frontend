@@ -64,7 +64,7 @@ class Api {
     }
 
     async updateMeetingImage(id, url, jwt) {
-        const response = await fetch(`${this._baseUrl}/Meetings/updateMeetingImage`, {
+        return await fetch(`${this._baseUrl}/Meetings/updateMeetingImage`, {
             method: 'POST',
             headers: {
                 authorization: `bearer ${jwt}`,
@@ -75,11 +75,10 @@ class Api {
                 imageUrl: url
             })
         });
-        return response;
     }
 
     async getCurrentMeeting(id, jwt) {
-        const response = await fetch(`${this._baseUrl}/Meetings/getCurrentMeeting`, {
+        const response = await fetch(`${this._baseUrl}/Meetings/getMeetingInfo`, {
             method: 'POST',
             headers: {
                 authorization: `bearer ${jwt}`,
@@ -90,6 +89,64 @@ class Api {
             })
         });
         return this._getResponseData(response);
+    }
+
+    async updateMeeting(meeting, jwt) {
+        return await fetch(`${this._baseUrl}/Meetings/updateMeeting`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(meeting)
+        });
+    }
+
+    async deleteMeeting(id, jwt) {
+        return await fetch(`${this._baseUrl}/Meetings/deleteMeeting`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                meetingId: id
+            })
+        });
+    }
+
+    async getMeetingImage(id, jwt){
+        const response = await fetch(`${this._baseUrl}/Meetings/getMeetingImage`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({meetingId: id})
+        });
+        return this._getResponseData(response);
+    }
+
+    async visitMeeting(id, jwt){
+        return await fetch(`${this._baseUrl}/Meetings/visitMeeting`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({meetingId: id})
+        });
+    }
+
+    async cancelMeetingVisiting(id, jwt){
+        return await fetch(`${this._baseUrl}/Meetings/cancelMeetingVisiting`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({meetingId: id})
+        });
     }
 
     setUserInfo(name, info, jwt){
@@ -103,19 +160,6 @@ class Api {
                 name: name,
                 about: info
             })
-        })
-            .then((res) => {
-                return this._getResponseData(res);
-            });
-    }
-
-    deleteMeeting(id, jwt) {
-        return fetch(`${this._baseUrl}/cards/${id}`, {
-            method: 'DELETE',
-            headers: {
-                authorization: `bearer ${jwt}`,
-                'Content-Type': 'application/json'
-            },
         })
             .then((res) => {
                 return this._getResponseData(res);

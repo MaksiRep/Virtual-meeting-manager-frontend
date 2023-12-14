@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     max-width: 75rem;
-    margin: 0 auto 2rem;
+    margin: 0 auto 0;
 }
 
 .meeting__title{
@@ -37,6 +37,8 @@
 
 .meeting__img{
     max-width: 30rem;
+    min-width: 10rem;
+    min-height: 10rem;
     margin-right: 5rem;
     border-radius: 10px;
 }
@@ -59,18 +61,31 @@
     background-color: #dcd9ff;
     min-height: 2.5rem;
     margin-bottom: 0.7rem;
+    transition: background-color 0.2s linear;
+}
+
+.contact-info:hover{
+    background-color: #c2bdff;
 }
 
 .meeting__owner{
     margin-left: 0.6rem;
 }
 
+.meeting__columns{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
 .meeting__other-info{
     display: flex;
     flex-direction: column;
+    justify-self: end;
     max-height: 100%;
     justify-content: space-between;
     min-width: 50%;
+    max-width: 80%;
 }
 
 .meeting__info-span{
@@ -91,9 +106,22 @@
 }
 
 .edit-button__image{
-    max-width: 1.3rem;
-    max-height: 1.3rem;
-    padding: 0.1rem;
-    border: 2px solid #000;
+    max-width: 2rem;
+    max-height: 2rem;
+    border: 3.5px solid #000;
     border-radius: 3px;
+    margin-left: 2.6rem;
+}
+
+.contact-info-delete{
+    background-color: #ff8f8f;
+    border: 1px solid #ff5c5c;
+}
+
+.delete-button__image{
+    margin-right: 0.2rem;
+}
+
+.contact-info-delete:hover{
+    background-color: #ff5c5c;
 }

@@ -18,6 +18,7 @@ function EditMeetingPopup(props) {
 
     useEffect(() => {
         if(props.meeting){
+            console.log(props.meeting);
             titleRef.current.value = props.meeting.name;
             shortDescriptionRef.current.value = props.meeting.shortDescription;
             fullDescriptionRef.current.value = props.meeting.description;
@@ -25,12 +26,12 @@ function EditMeetingPopup(props) {
             startDateRef.current.value = props.meeting.startDate;
             if (props.meeting.endDate)
                 endDateRef.current.value = props.meeting.endDate;
-            if (props.meeting.peopleNum)
-                peopleNumRef.current.value = props.meeting.peopleNum;
-            if (props.meeting.sexRestr)
-                sexRestrRef.current.value = props.meeting.sexRestr;
-            if (props.meeting.ageRestr)
-                ageRestrRef.current.value = props.meeting.ageRestr;
+            if (props.meeting.maxUsers)
+                peopleNumRef.current.value = props.meeting.maxUsers;
+            if (props.meeting.gender)
+                sexRestrRef.current.value = props.meeting.gender;
+            if (props.meeting.minAge)
+                ageRestrRef.current.value = props.meeting.minAge;
         }
         else {
             titleRef.current.value = '';
@@ -47,16 +48,19 @@ function EditMeetingPopup(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        props.onSubmit({
+        const meeting = {
             name: titleRef.current.value,
             description: fullDescriptionRef.current.value,
             startDate: startDateRef.current.value + 'T00:00:00.000Z',
             endDate: endDateRef.current.value ? endDateRef.current.value + 'T23:59:59.999Z' : startDateRef.current.value + 'T23:59:59.999Z',
-            maxUsers: Number(peopleNumRef.current.value),
+            maxUsers: peopleNumRef.current.value ? Number(peopleNumRef.current.value) : null,
             minAge: ageRestrRef.current.value ? ageRestrRef.current.value : null,
-            gender: sexRestrRef.current.value ? sexRestrRef.current.value : null,
+            gender: !(sexRestrRef.current.value === 'default') ? sexRestrRef.current.value : null,
             shortDescription: shortDescriptionRef.current.value,
-        }, imageRef.current.value);
+        }
+        if(props.meeting)
+            meeting.id = props.meeting.id;
+        props.onSubmit(meeting, imageRef.current.value);
     }
 
     return(
@@ -94,6 +98,7 @@ function EditMeetingPopup(props) {
             <label className='form__label'>Ограничения по полу</label>
             <select className='form-auth__input' placeholder='Пол' id='age-restr-input' name='age-restr'
                     ref={sexRestrRef}>
+                <option value='default'>Нет</option>
                 <option value='male'>Муж</option>
                 <option value='female'>Жен</option>
             </select>

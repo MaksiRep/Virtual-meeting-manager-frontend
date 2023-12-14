@@ -16,7 +16,9 @@ import {
     editPopupStyle,
     recoveryBtnDefault,
     saveBtn,
-    saveBtnDefault
+    saveBtnDefault,
+    deleteBtnMessageDefault,
+    deleteBtnMessage
 } from "../utils/constants";
 import api from "../utils/Api";
 import {initialUsers} from "../utils/initialUsers";
@@ -35,6 +37,7 @@ import UserPopup from "./landing/UserPopup";
 import MainPage from "./landing/MainPage";
 import ProtectedRouteElement from "./landing/ProtectedRoute";
 import Loader from "./landing/Loader";
+import DeletePopup from "./landing/DeletePopup";
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
@@ -48,6 +51,7 @@ function App() {
     const [isCreateMeetingPopupOpen, setCreateMeetingPopupState] = useState(false);
     const [isEditMeetingPopupOpen, setEditMeetingPopupState] = useState(false);
     const [isInfoTooltipPopupOpen, setInfoTooltipPopupState] = useState(false);
+    const [isDeletePopupOpen, setDeletePopupState] = useState(false);
     const [authMessage, setAuthMessage] = useState({});
     const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
     const [openedCard, setOpenedCard] = useState({});
@@ -58,8 +62,10 @@ function App() {
     const [isLoggedIn, setLoggedIn] = useState(true);
     const [isAdmin, setAdminStatus] = useState(false);
     const [isLoaded, setLoadedState] = useState(false);
+    const [isMeetingLoaded, setMeetingLoadedStatus] = useState(false);
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
     const [editBtnMessage, setEditBtnMessage] = useState(saveBtnDefault);
+    const [deleteBtn, setDeleteBtn] = useState(deleteBtnMessageDefault)
     const [routeState, setRouteState] = useState({});
     const [routeAdminState, setRouteAdminState] = useState({});
     const navigate = useNavigate();
@@ -89,24 +95,37 @@ function App() {
         if(isLoggedIn && routeState)
             navigate(routeState.from);
     }, [routeState])
+    
+    const fetchUser = async () => {
+        const userId = await api.getCurrentUser(localStorage.getItem('accessToken'));
+        setUserRoles(userId);
+        const userInfo = await api.getUserInfo(userId.id, localStorage.getItem('accessToken'));
+        setCurrentUser(userInfo);
+    }
+
+    const fetchCards = async () => {
+        return await api.getInitialMeetings(baseMeetingsRequest, localStorage.getItem('accessToken'));
+    }
+
+    const fetchImage = async (card) => {
+        const url = await api.getMeetingImage(card.id, localStorage.getItem('accessToken'));
+        setCurrentCards(prev => {
+            return prev.map(c => {
+                if (c.id === card.id) {
+                    return {
+                        ...c,
+                        imageUrl: url.imageUrl
+                    }
+                }
+                return c;
+            })
+        });
+    }
 
     useEffect(() => {
         if(isAccessTokenExist()){
-            const fetchUser = async () => {
-                const userId = await api.getCurrentUser(localStorage.getItem('accessToken'));
-                setUserRoles(userId);
-                const userInfo = await api.getUserInfo(userId.id, localStorage.getItem('accessToken'));
-                setCurrentUser(userInfo);
-            }
-
-            const fetchCards = async () => {
-                const cardsData = await api.getInitialMeetings(baseMeetingsRequest, localStorage.getItem('accessToken'));
-                setCurrentCards(cardsData.items);
-            }
-
             if (isLoggedIn) {
                 fetchUser()
-                    .then(() => setLoadedState(true))
                     .catch(err => {
                         if (err === 'Ошибка: 401') {
                             handleRefreshToken()
@@ -122,7 +141,16 @@ function App() {
                             console.log(err);
                     })
                 fetchCards()
+                    .then((data) => {
+                        setCurrentCards(data.items);
+                        setLoadedState(true);
+                        for (const card of data.items) {
+                            fetchImage(card)
+                                .catch(err => console.log(err))
+                        }
+                    })
                     .catch(err => console.log(err))
+
             }
         }
         else {
@@ -198,24 +226,125 @@ function App() {
         setAnyPopupState(true);
     }
 
+    const handleDeleteMeetingClick = () => {
+        setDeletePopupState(true);
+        setAnyPopupState(true);
+    }
+
     const handleOverlayClose = (evt) => {
         if(evt.target === evt.currentTarget)
             closeAllPopups();
     }
 
     const handleGetCurrentMeeting = async (id) => {
+        setMeetingLoadedStatus(false);
         try {
             const data = await api.getCurrentMeeting(id, localStorage.getItem('accessToken'))
             setSelectedMeeting(data);
-            console.log(data);
         }
         catch (err) {
             console.log(err);
         }
+        finally
+        {
+            setMeetingLoadedStatus(true);
+        }
+    }
+
+    const handleCreateMeeting = async (meeting, img) => {
+        setEditBtnMessage(saveBtn);
+        try {
+            const meetingId = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
+            meeting.id = meetingId.meetingId;
+            await api.updateMeetingImage(meetingId.meetingId, img, localStorage.getItem('accessToken'));
+            meeting.imageUrl = img;
+            setCurrentCards(state => [...state, meeting]);
+            closeAllPopups();
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setEditBtnMessage(saveBtnDefault);
+        }
+    }
+
+    const handleChangeMeeting = async (meeting, image) => {
+        console.log(meeting);
+        setEditBtnMessage(saveBtn);
+        try {
+            await api.updateMeeting(meeting, localStorage.getItem('accessToken'));
+            await api.updateMeetingImage(meeting.id, image, localStorage.getItem('accessToken'));
+            console.log(image);
+            setCurrentCards(currentCards.map(card => {
+                if(card.id === meeting.id){
+                    return {
+                        ...card,
+                        name: meeting.name,
+                        startDate: meeting.startDate,
+                        endDate: meeting.endDate,
+                        shortDescription: meeting.shortDescription,
+                        imageUrl: image
+                    }
+                }
+                return card;
+            }));
+            setSelectedMeeting({
+                ...selectedMeeting,
+                name: meeting.name,
+                description: meeting.description,
+                startDate: meeting.startDate,
+                endDate: meeting.endDate,
+                imageUrl: image
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setEditBtnMessage(saveBtnDefault);
+        }
+        closeAllPopups();
+    }
+
+    const handleDeleteMeeting = async () => {
+        setDeleteBtn(deleteBtnMessage);
+        try {
+            console.log(currentCards);
+            console.log(selectedMeeting);
+            await api.deleteMeeting(selectedMeeting.id, localStorage.getItem('accessToken'));
+            setCurrentCards(prev => {
+                 return prev.filter((c) =>
+                    c.id !== selectedMeeting.id)
+            });
+            console.log(currentCards);
+            navigate('/meeting-list', {replace: true});
+            closeAllPopups();
+            setSelectedMeeting({});
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setDeleteBtn(deleteBtnMessageDefault);
+        }
+    }
+
+    const handleToggleGoing = async (isGoing) => {
+        try {
+            (!isGoing) ? await api.visitMeeting(selectedMeeting.id, localStorage.getItem('accessToken')) :
+                await api.cancelMeetingVisiting(selectedMeeting.id, localStorage.getItem('accessToken'));
+            setSelectedMeeting({
+                ...selectedMeeting,
+                isUserVisitMeeting: (!selectedMeeting.isUserVisitMeeting)
+            });
+        }
+        catch(err) {
+
+        }
     }
 
     const handleRegisterSubmit = async (data) => {
-        console.log(data);
         try {
             const tokens = await registerUser(data);
             setAuthMessage(authMessageSuccess);
@@ -235,7 +364,6 @@ function App() {
     }
 
     const handleLoginUser = async (authInfo) => {
-        console.log(authInfo);
         try {
             const tokens = await loginUser(authInfo)
                 .then();
@@ -259,33 +387,6 @@ function App() {
 
     const handleRecoveryPassword = (email) => {
         console.log(email);
-        closeAllPopups();
-    }
-
-    const handleCreateMeeting = async (meeting, img) => {
-        console.log(meeting);
-        console.log(img);
-        setEditBtnMessage(saveBtn);
-        try {
-            const meetingId = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
-            meeting.id = meetingId;
-            console.log(meetingId.meetingId);
-            await api.updateMeetingImage(meetingId.meetingId, img, localStorage.getItem('accessToken'));
-            meeting.imageUrl = img;
-            console.log(meeting);
-            setCurrentCards(state => [meeting, ...state]);
-            closeAllPopups();
-        }
-        catch (err) {
-            console.log(err);
-        }
-        finally {
-            setEditBtnMessage(saveBtnDefault);
-        }
-    }
-
-    const handleChangeMeeting = (meeting) => {
-        console.log(meeting);
         closeAllPopups();
     }
 
@@ -315,6 +416,7 @@ function App() {
         setEditUserPopupState(false);
         setInfoTooltipPopupState(false);
         setCreateMeetingPopupState(false);
+        setDeletePopupState(false);
         setAnyPopupState(false);
     }
 
@@ -344,7 +446,9 @@ function App() {
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
-                                                    loggedIn={isLoggedIn} meetingInfo={selectedMeeting} getInfo={handleGetCurrentMeeting}/>}/>
+                                                    loggedIn={isLoggedIn} meetingInfo={selectedMeeting} getInfo={handleGetCurrentMeeting}
+                                                    loaded={isMeetingLoaded} onGoing={handleToggleGoing}
+                                                    onDeleteClick={handleDeleteMeetingClick} user={currentUser}/>}/>
                                </Routes>
                                :
                                <Loader />
@@ -367,6 +471,8 @@ function App() {
                         user={selectedUser}/>
                    <InfoTooltip authMessage={authMessage} isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups}
                                 onOverlayClose={handleOverlayClose}/>
+                   <DeletePopup isOpen={isDeletePopupOpen} btnMessage={deleteBtn} onClose={closeAllPopups}
+                                onSubmit={handleDeleteMeeting} onOverlayClose={handleOverlayClose}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>
