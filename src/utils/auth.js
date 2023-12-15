@@ -7,47 +7,42 @@ function getResponseData(res) {
     return res.json();
 }
 
-export function registerUser(email, password) {
-    return fetch(`${baseUrl}/Auth/signUp`, {
+export async function registerUser(userInfo) {
+    const response = await fetch(`${baseUrl}/Auth/registration`,
+    {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            password: password,
-            email: email
-        })
-    })
-        .then((res) => {
-            return getResponseData(res);
-        });
+        body: JSON.stringify(userInfo)
+    });
+    return getResponseData(response);
 }
 
-export function loginUser(email, password) {
-    return fetch(`${baseUrl}/Auth/signIn`, {
+export async function loginUser(userInfo) {
+    const response = await fetch(`${baseUrl}/Auth/signIn`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            email: email,
-            password: password
-        })
-    })
-        .then((res) => {
-            return getResponseData(res);
-        });
+        body: JSON.stringify(userInfo)
+    });
+    return getResponseData(response);
 }
 
 
 
-export function checkToken(jwt) {
-    return fetch(`${baseUrl}/Auth/`,{
-        method: 'GET',
+export function refreshToken(access, refresh) {
+    return fetch(`${baseUrl}/Auth/refreshToken`,{
+        method: 'POST',
         headers: {
             "Content-Type": "application/json",
-            "Authorization" : `Bearer ${jwt}`
-        }
+            "Authorization" : `Bearer ${access}`
+        },
+        body: JSON.stringify({
+            accessToken: access,
+            refreshToken: refresh
+        })
     })
         .then((res) => {
             return getResponseData(res);

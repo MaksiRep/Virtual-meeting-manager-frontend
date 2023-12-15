@@ -7,7 +7,7 @@
 
 .popup__image{
     max-width: 45%;
-    max-height: 70vh;
+    max-height: 65vh;
     min-width: 2rem;
     min-height: 2rem;
     height: 100%;
@@ -55,7 +55,13 @@
 }
 
 .popup-form__container{
-    max-width: 40rem;
+    max-width: 35rem;
+    max-height: 87vh;
+    overflow: auto;
+}
+
+::-webkit-scrollbar {
+    width: 0;
 }
 
 .popup__scroll{
@@ -69,5 +75,18 @@
 .popup__admit-button{
     text-decoration: none;
     margin-bottom: 2rem;
+}
+
+.popup__admit-button:disabled{
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+    opacity: 0.5;
+    cursor: auto;
+
+}
+
+.user-exit-button{
+    top: 0;
 }
 

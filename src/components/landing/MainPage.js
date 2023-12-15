@@ -12,10 +12,10 @@ function MainPage(props) {
                 <div className='main-page-creators'>
                     <p className='main-page-creators__title'>Создатели:</p>
                     {props.creators.map((user) =>
-                        <p className='main-page-creators__name'>{user.name} {user.surname}</p>
+                        <p className='main-page-creators__name' key={user._id}>{user.name} {user.surname}</p>
                     )}
                 </div>
-                <p className='main-page-users__count'>Количество пользователей: {props.creators.length}</p>
+                <p className='main-page-users__count'>Количество пользователей: {props.count}</p>
             </div>
         </div>
     );
