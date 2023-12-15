@@ -28,7 +28,7 @@ function Card (props) {
                             <p className='element__date'>-{getDateFormat(props.card.endDate)}</p>
                         </> : <></>}
                     </div>
-                    {props.card.willGo && <p className="element__will-go">Вы идёте✓</p>}
+                    {props.card.isUserVisitMeeting && <p className="element__will-go">Вы идёте✓</p>}
                 </div>
             </div>
         </article>

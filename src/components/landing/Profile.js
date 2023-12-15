@@ -15,9 +15,9 @@ function Profile(props) {
         props.handleLogOut();
     }
 
-    // const handleUserCards = (cards) => {
-    //     return cards.filter((card) => card.willGo === true);
-    // }
+    const handleUserCards = (cards) => {
+        return cards.filter((card) => card.isUserVisitMeeting);
+    }
 
     return (
         <div className='profile'>
@@ -37,7 +37,7 @@ function Profile(props) {
                 </Link>
             </div>
             <h2 className='profile__user-cards'>Мероприятия, на которые вы идёте:</h2>
-            <MeetingList cards={currentCards} onCardClick={props.onCardClick}/>
+            <MeetingList cards={handleUserCards(currentCards)} onCardClick={props.onCardClick}/>
         </div>
     );
 }

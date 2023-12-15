@@ -149,6 +149,16 @@ class Api {
         });
     }
 
+    async getUsersCount() {
+        const response = await fetch(`${this._baseUrl}/Statistic/getUsersCount`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        return this._getResponseData(response);
+    }
+
     setUserInfo(name, info, jwt){
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',

@@ -63,6 +63,7 @@ function App() {
     const [isAdmin, setAdminStatus] = useState(false);
     const [isLoaded, setLoadedState] = useState(false);
     const [isMeetingLoaded, setMeetingLoadedStatus] = useState(false);
+    const [usersNum, setUsersNum] = useState();
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
     const [editBtnMessage, setEditBtnMessage] = useState(saveBtnDefault);
     const [deleteBtn, setDeleteBtn] = useState(deleteBtnMessageDefault)
@@ -122,9 +123,15 @@ function App() {
         });
     }
 
+    const fetchUsersCount = async() => {
+        const num = await api.getUsersCount();
+        setUsersNum(num);
+    }
+
     useEffect(() => {
         if(isAccessTokenExist()){
             if (isLoggedIn) {
+                setLoadedState(false);
                 fetchUser()
                     .catch(err => {
                         if (err === 'Ошибка: 401') {
@@ -149,8 +156,7 @@ function App() {
                                 .catch(err => console.log(err))
                         }
                     })
-                    .catch(err => console.log(err))
-
+                    .catch(err => console.log(err));
             }
         }
         else {
@@ -158,6 +164,11 @@ function App() {
             setLoadedState(true);
         }
     }, [isLoggedIn]);
+
+    useEffect(() => {
+        fetchUsersCount()
+            .catch(err => console.log(err));
+    }, []);
 
     const handleRefreshToken = async () => {
         const tokens = await refreshToken(localStorage.getItem('accessToken'),
@@ -176,11 +187,6 @@ function App() {
     // useEffect(() => {
     //     setCurrentCards(initialCards);
     // },[])
-
-    
-    useEffect(() => {
-            setUsers(initialUsers);
-    }, [])
 
     useEffect(() => {
         const close = (evt) => {
@@ -258,7 +264,9 @@ function App() {
             meeting.id = meetingId.meetingId;
             await api.updateMeetingImage(meetingId.meetingId, img, localStorage.getItem('accessToken'));
             meeting.imageUrl = img;
+            meeting.isUserVisitMeeting = true;
             setCurrentCards(state => [...state, meeting]);
+            navigate(`/meeting/${meeting.id}`, {replace: true});
             closeAllPopups();
         }
         catch (err) {
@@ -270,12 +278,10 @@ function App() {
     }
 
     const handleChangeMeeting = async (meeting, image) => {
-        console.log(meeting);
         setEditBtnMessage(saveBtn);
         try {
             await api.updateMeeting(meeting, localStorage.getItem('accessToken'));
             await api.updateMeetingImage(meeting.id, image, localStorage.getItem('accessToken'));
-            console.log(image);
             setCurrentCards(currentCards.map(card => {
                 if(card.id === meeting.id){
                     return {
@@ -310,14 +316,11 @@ function App() {
     const handleDeleteMeeting = async () => {
         setDeleteBtn(deleteBtnMessage);
         try {
-            console.log(currentCards);
-            console.log(selectedMeeting);
             await api.deleteMeeting(selectedMeeting.id, localStorage.getItem('accessToken'));
             setCurrentCards(prev => {
                  return prev.filter((c) =>
                     c.id !== selectedMeeting.id)
             });
-            console.log(currentCards);
             navigate('/meeting-list', {replace: true});
             closeAllPopups();
             setSelectedMeeting({});
@@ -338,9 +341,20 @@ function App() {
                 ...selectedMeeting,
                 isUserVisitMeeting: (!selectedMeeting.isUserVisitMeeting)
             });
+            setCurrentCards(prev => {
+                return prev.map((c) => {
+                    if (c.id === selectedMeeting.id) {
+                        return {
+                            ...c,
+                            isUserVisitMeeting: !(c.isUserVisitMeeting)
+                        }
+                    }
+                    return c;
+                })
+            });
         }
         catch(err) {
-
+            console.log(err);
         }
     }
 
@@ -430,7 +444,7 @@ function App() {
                            isLoaded ?
                                <Routes>
                                    <Route path='/*' element={<Navigate to='/home' replace />}/>
-                                   <Route path='/home' element={<MainPage creators={users}/>}/>
+                                   <Route path='/home' element={<MainPage creators={initialUsers} count={usersNum}/>}/>
                                    <Route path='/sign-up' element={(!isLoggedIn) ? <Register onSubmit={handleRegisterSubmit}/>  : <Navigate to='/profile' replace />}/>
                                    <Route path='/sign-in' element={(!isLoggedIn) ? <Login onRecoveryClick={handleRecoveryPasswordClick}
                                                                                           onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>

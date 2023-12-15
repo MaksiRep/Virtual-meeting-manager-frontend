@@ -15,7 +15,7 @@ function MainPage(props) {
                         <p className='main-page-creators__name' key={user._id}>{user.name} {user.surname}</p>
                     )}
                 </div>
-                <p className='main-page-users__count'>Количество пользователей: {props.creators.length}</p>
+                <p className='main-page-users__count'>Количество пользователей: {props.count}</p>
             </div>
         </div>
     );

@@ -18,7 +18,6 @@ function EditMeetingPopup(props) {
 
     useEffect(() => {
         if(props.meeting){
-            console.log(props.meeting);
             titleRef.current.value = props.meeting.name;
             shortDescriptionRef.current.value = props.meeting.shortDescription;
             fullDescriptionRef.current.value = props.meeting.description;
@@ -55,7 +54,7 @@ function EditMeetingPopup(props) {
             endDate: endDateRef.current.value ? endDateRef.current.value + 'T23:59:59.999Z' : startDateRef.current.value + 'T23:59:59.999Z',
             maxUsers: peopleNumRef.current.value ? Number(peopleNumRef.current.value) : null,
             minAge: ageRestrRef.current.value ? ageRestrRef.current.value : null,
-            gender: !(sexRestrRef.current.value === 'default') ? sexRestrRef.current.value : null,
+            gender: (!(sexRestrRef.current.value === 'default') && sexRestrRef.current.value) ? sexRestrRef.current.value : null,
             shortDescription: shortDescriptionRef.current.value,
         }
         if(props.meeting)

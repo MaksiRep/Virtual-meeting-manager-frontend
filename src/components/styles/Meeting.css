@@ -101,7 +101,7 @@
 }
 
 .contact-info__img{
-    max-width: 3rem;
+    max-width: 2.2rem;
     max-height: 2.5rem;
 }
 
@@ -110,7 +110,7 @@
     max-height: 2rem;
     border: 3.5px solid #000;
     border-radius: 3px;
-    margin-left: 2.6rem;
+    margin-left: 2rem;
 }
 
 .contact-info-delete{

@@ -27,7 +27,6 @@ function Meeting(props) {
     }, [currentMeetings])
 
     useEffect(() => {
-        console.log(props.meetingInfo.isUserVisitMeeting);
         if(currentMeeting) {
             setIsGoing(props.meetingInfo.isUserVisitMeeting);
             setIsOrg((props.user.id === props.meetingInfo.managerId));
@@ -88,7 +87,7 @@ function Meeting(props) {
                                         <div className='meeting__owner-info'>
                                             <p className='meeting__owner'>Организатор: {props.meetingInfo.managerEmail}</p>
                                             <div className='contact-info' onClick={handleInfoClick}>
-                                                <p className='contact-info__text'>Контактная информация</p>
+                                                <p className='contact-info__text'>Контактная инф-ция</p>
                                                 <img className='contact-info__img' src={personalInfoIcon}/>
                                             </div>
                                             {
