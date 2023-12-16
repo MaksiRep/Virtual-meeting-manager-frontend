@@ -29,7 +29,9 @@ function Meeting(props) {
     useEffect(() => {
         if(currentMeeting) {
             setIsGoing(props.meetingInfo.isUserVisitMeeting);
-            setIsOrg((props.user.id === props.meetingInfo.managerId));
+            if(props.user.roles) {
+                setIsOrg((props.user.id === props.meetingInfo.managerId || props.user.roles.includes('admin')));
+            }
         }
     }, [props.meetingInfo, props.meetingInfo.isUserVisitMeeting])
 

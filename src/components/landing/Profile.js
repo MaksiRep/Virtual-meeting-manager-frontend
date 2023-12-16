@@ -37,7 +37,12 @@ function Profile(props) {
                 </Link>
             </div>
             <h2 className='profile__user-cards'>Мероприятия, на которые вы идёте:</h2>
-            <MeetingList cards={handleUserCards(currentCards)} onCardClick={props.onCardClick}/>
+            {(handleUserCards(currentCards).length) ?
+                <MeetingList cards={handleUserCards(currentCards)} onCardClick={props.onCardClick}/> :
+                <div>
+                    <h3 className='profile__error'>УВЫ</h3>
+                    <h3 className='profile__greetings'>Вы ещё не записаны ни на одно мероприятие</h3>
+                </div>}
         </div>
     );
 }

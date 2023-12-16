@@ -101,6 +101,7 @@ function App() {
         const userId = await api.getCurrentUser(localStorage.getItem('accessToken'));
         setUserRoles(userId);
         const userInfo = await api.getUserInfo(userId.id, localStorage.getItem('accessToken'));
+        userInfo.roles = userId.roles;
         setCurrentUser(userInfo);
     }
 
@@ -168,7 +169,7 @@ function App() {
     useEffect(() => {
         fetchUsersCount()
             .catch(err => console.log(err));
-    }, []);
+    }, [isLoggedIn]);
 
     const handleRefreshToken = async () => {
         const tokens = await refreshToken(localStorage.getItem('accessToken'),
@@ -360,6 +361,7 @@ function App() {
 
     const handleRegisterSubmit = async (data) => {
         try {
+            console.log(data);
             const tokens = await registerUser(data);
             setAuthMessage(authMessageSuccess);
             setInfoTooltipPopupState(true);
@@ -454,7 +456,7 @@ function App() {
                                                                                                cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn}/>}/>
                                    <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
                                                                                                         onChange={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
-                                   <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
+                                   <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={initialUsers}
                                                                                                      onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
                                    <Route path='/meeting/:id'
