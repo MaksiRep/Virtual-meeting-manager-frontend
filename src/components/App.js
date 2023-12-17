@@ -101,8 +101,14 @@ function App() {
         const userId = await api.getCurrentUser(localStorage.getItem('accessToken'));
         setUserRoles(userId);
         const userInfo = await api.getUserInfo(userId.id, localStorage.getItem('accessToken'));
-        userInfo.roles = userId.roles;
+        console.log(userInfo);
         setCurrentUser(userInfo);
+    }
+
+    const fetchUsersList = async () => {
+        const usersList = await api.getUsersList(0, 30, localStorage.getItem('accessToken'));
+        console.log(usersList.items);
+        setUsers(usersList.items);
     }
 
     const fetchCards = async () => {
@@ -167,6 +173,13 @@ function App() {
     }, [isLoggedIn]);
 
     useEffect(() => {
+        if(isAdmin) {
+            fetchUsersList()
+                .catch(err => console.log(err));
+        }
+    }, [isAdmin])
+
+    useEffect(() => {
         fetchUsersCount()
             .catch(err => console.log(err));
     }, [isLoggedIn]);
@@ -184,10 +197,6 @@ function App() {
                 setAdminStatus(true);
             }
     }, [userRoles])
-
-    // useEffect(() => {
-    //     setCurrentCards(initialCards);
-    // },[])
 
     useEffect(() => {
         const close = (evt) => {
@@ -396,8 +405,47 @@ function App() {
         }
     }
 
-    const handleChangeProfile = (user) => {
-        console.log(user);
+    const handleChangeProfile = async (user) => {
+        try{
+            await api.updateUserInfo(user, localStorage.getItem('accessToken'));
+            if(currentUser.id === user.userId) {
+                setCurrentUser({
+                    ...currentUser,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    birthDate: user.birthDate,
+                    gender: user.gender,
+                    phone: user.phone
+                });
+            }
+            setUsers(users.map(u => {
+                console.log(u);
+                    if (u.id === user.userId) {
+                        console.log(user);
+                        return {
+                            ...u,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            birthDate: user.birthDate,
+                            gender: user.gender,
+                            phone: user.phone
+                        }
+                    }
+                    return u;
+                })
+            );
+            closeAllPopups();
+            setAuthMessage(authMessageSuccess);
+            setInfoTooltipPopupState(true);
+            setAnyPopupState(true);
+        }
+        catch (err) {
+            console.log(err);
+            console.log(err);
+            setAuthMessage(authMessageFailure);
+            setInfoTooltipPopupState(true);
+            setAnyPopupState(true);
+        }
     }
 
 
@@ -449,15 +497,15 @@ function App() {
                                    <Route path='/home' element={<MainPage creators={initialUsers} count={usersNum}/>}/>
                                    <Route path='/sign-up' element={(!isLoggedIn) ? <Register onSubmit={handleRegisterSubmit}/>  : <Navigate to='/profile' replace />}/>
                                    <Route path='/sign-in' element={(!isLoggedIn) ? <Login onRecoveryClick={handleRecoveryPasswordClick}
-                                                                                          onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
+                                                    onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/profile' element={<ProtectedRouteElement element={Profile} userInfo={currentUser} userCards={currentCards} o
-                                                                                          onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
+                                                    onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
                                    <Route path='/meeting-list' element={<ProtectedRouteElement element={Main} onCreateClick={handleCreateMeetingClick}
-                                                                                               cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn}/>}/>
+                                                    cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn}/>}/>
                                    <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
-                                                                                                        onChange={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
-                                   <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={initialUsers}
-                                                                                                     onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
+                                                    user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
+                                   <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
+                                                    onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
@@ -483,7 +531,7 @@ function App() {
                                      onClose={closeAllPopups} onSubmit={handleCreateMeeting} onOverlayClose={handleOverlayClose}
                                      style={editPopupStyle} titleName={createMeetingTitle}/>
                    <UserPopup isOpen={isEditUserPopupOpen} btnMessage={editBtnMessage}
-                        onClose={closeAllPopups} onSubmit={handleChangeUser} onOverlayClose={handleOverlayClose}
+                        onClose={closeAllPopups} onSubmit={handleChangeProfile} onOverlayClose={handleOverlayClose}
                         user={selectedUser}/>
                    <InfoTooltip authMessage={authMessage} isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups}
                                 onOverlayClose={handleOverlayClose}/>

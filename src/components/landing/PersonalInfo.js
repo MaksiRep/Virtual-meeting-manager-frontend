@@ -1,76 +1,61 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import '../styles/PersonalInfo.css';
 import '../styles/Auth.css';
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
+import PhoneInput from "react-phone-number-input";
 
 function PersonalInfo(props) {
 
     const currentUser = React.useContext(CurrentUserContext);
 
-    const [name, setName] = useState('');
-    const [surname, setSurname] = useState('');
+    const nameRef = useRef();
+    const surnameRef = useRef();
+    const sexRef = useRef();
+    const dateBirthRef = useRef();
     const [email, setEmail] = useState('');
-    const [sex, setSex] = useState('');
-    const [birthDate, setBirthDate] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState();
 
     useEffect(() => {
-        setName(currentUser.firstName);
-        setSurname(currentUser.lastName);
-        setEmail(currentUser.email);
-        setSex(currentUser.gender);
-        setBirthDate(currentUser.birthDate);
+        if (!(Object.keys(currentUser).length === 0 && currentUser.constructor === Object)){
+            nameRef.current.value = currentUser.firstName;
+            surnameRef.current.value = currentUser.lastName;
+            setPhoneNumber(currentUser.phone);
+            setEmail(currentUser.email);
+            sexRef.current.value = currentUser.gender;
+            dateBirthRef.current.value = props.user.birthDate;
+        }
     }, [currentUser]);
-
-    function handleChangeName(e) {
-        setName(e.target.value);
-    }
-
-    function handleChangeSurname(e) {
-        setSurname(e.target.value);
-    }
-
-    function handleChangeEmail(e) {
-        setEmail(e.target.value);
-    }
-
-    function handleChangeSex(e) {
-        setSex(e.target.value);
-    }
-
-    function handleChangeBirthDate(e) {
-        setBirthDate(e.target.value);
-    }
 
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(e.target.value)
-        props.onChange({
-            name,
-            surname,
-            email,
-            sex,
-            birthDate
-        });
+        props.onSubmit({
+            userId: currentUser.id,
+            firstName: nameRef.current.value,
+            lastName: surnameRef.current.value,
+            birthDate: dateBirthRef.current.value,
+            gender: sexRef.current.value,
+            phone: phoneNumber
+        })
     }
 
     return(
         <div className='personal__info'>
             <h2 className='auth__title'>Личная информация</h2>
             <form className='form-auth' onSubmit={handleSubmit}>
-                <input className='form-auth__input' type='email' placeholder='Email' id='email-input' name='email'
-                       required minLength="2" maxLength="40" value={email || ''} onChange={handleChangeEmail}/>
-                <input className='form-auth__input' type='text' placeholder='Имя' onChange={handleChangeName}
-                       id='name-input' name='name' required minLength="2" maxLength="40" value={name || ''}/>
-                <input className='form-auth__input' type='text' placeholder='Фамилия' onChange={handleChangeSurname}
-                       id='surname-input' name='surname' required minLength="2" maxLength="40" value={surname || ''}/>
+                <p className='form-auth__input'>{email}</p>
+                <input className='form-auth__input' type='text' placeholder='Имя' ref={nameRef}
+                       id='name-input' name='name' required minLength="2" maxLength="40"/>
+                <input className='form-auth__input' type='text' placeholder='Фамилия' ref={surnameRef}
+                       id='surname-input' name='surname' required minLength="2" maxLength="40"/>
+                <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber} placeholder='Номер телефона'/>
                 <select className='form-auth__input' placeholder='Пол' id='password-repeat-input' name='password'
-                        value={sex} required onChange={handleChangeSex}>
+                        ref={sexRef} required>
                     <option value='male'>Муж</option>
                     <option value='female'>Жен</option>
                 </select>
-                <input className='form-auth__input' type='date' placeholder='Дата рождения' value={birthDate || ''}
+                <input className='form-auth__input' type='date' placeholder='Дата рождения'
                        id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01"
-                       onChange={handleChangeBirthDate}/>
+                       ref={dateBirthRef}/>
                 <button className='auth__admit-button'>Сохранить</button>
             </form>
         </div>

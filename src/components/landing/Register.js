@@ -1,16 +1,18 @@
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import '../styles/Auth.css'
+import PhoneInput from 'react-phone-number-input'
 
 function Register(props) {
 
     const emailRef = useRef();
     const passwordRef = useRef();
     const repeatPasswordRef = useRef();
-    const nameRef = React.useRef();
-    const surnameRef = React.useRef();
-    const sexRef = React.useRef();
-    const dateBirthRef = React.useRef();
+    const nameRef = useRef();
+    const surnameRef = useRef();
+    const sexRef = useRef();
+    const dateBirthRef = useRef();
+    const [phoneNumber, setPhoneNumber] = useState();
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -21,7 +23,8 @@ function Register(props) {
                 firstName: nameRef.current.value,
                 lastName: surnameRef.current.value,
                 gender: sexRef.current.value,
-                birthDate: dateBirthRef.current.value
+                birthDate: dateBirthRef.current.value,
+                phone: phoneNumber
             })
     }
 
@@ -39,6 +42,7 @@ function Register(props) {
                        id='name-input' name='name' required minLength="2" maxLength="40" ref={nameRef}/>
                 <input className='form-auth__input' type='text' placeholder='Фамилия'
                        id='surname-input' name='surname' required minLength="2" maxLength="40" ref={surnameRef}/>
+                <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber} placeholder='Номер телефона'/>
                 <select className='form-auth__input' placeholder='Пол' id='password-repeat-input' name='password' required ref={sexRef}>
                     <option value='' disabled selected>Пол</option>
                     <option value='male'>Муж</option>
