@@ -454,11 +454,6 @@ function App() {
         closeAllPopups();
     }
 
-    const handleChangeUser = (user) => {
-        console.log(user);
-        closeAllPopups();
-    }
-
     const handleChangePassword = (password) => {
        console.log(password);
     }
@@ -511,7 +506,7 @@ function App() {
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
                                                     loggedIn={isLoggedIn} meetingInfo={selectedMeeting} getInfo={handleGetCurrentMeeting}
-                                                    loaded={isMeetingLoaded} onGoing={handleToggleGoing}
+                                                    loaded={isMeetingLoaded} onGoing={handleToggleGoing} isAdmin={isAdmin}
                                                     onDeleteClick={handleDeleteMeetingClick} user={currentUser}/>}/>
                                </Routes>
                                :
