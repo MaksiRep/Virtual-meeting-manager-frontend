@@ -29,7 +29,9 @@ function Meeting(props) {
     useEffect(() => {
         if(currentMeeting) {
             setIsGoing(props.meetingInfo.isUserVisitMeeting);
-            setIsOrg((props.user.id === props.meetingInfo.managerId));
+            if(props.user.roles) {
+                setIsOrg((props.user.id === props.meetingInfo.managerId || props.user.roles.includes('admin')));
+            }
         }
     }, [props.meetingInfo, props.meetingInfo.isUserVisitMeeting])
 
@@ -114,7 +116,7 @@ function Meeting(props) {
                                 <div className='meeting__other-info'>
                                     <p className='meeting__description'>{props.meetingInfo.description}</p>
                                     <button className='popup__admit-button meeting__button' onClick={handleGoingClick}
-                                            disabled={isOrg}>{isGoing ? 'Не пойду' : 'Пойду'}</button>
+                                            disabled={isOrg && !props.isAdmin}>{isGoing ? 'Не пойду' : 'Пойду'}</button>
                                 </div>
                             </div>
                         </div> :

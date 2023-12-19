@@ -2,7 +2,6 @@ import React from "react";
 import '../styles/Popup.css'
 
 function PopupWithForm(props){
-
     return (
         <div className={`popup ${props.isOpen ? 'popup_opened' : ''}`} id={`${props.name}-popup`}
              onMouseDown={props.onOverlayClose}>

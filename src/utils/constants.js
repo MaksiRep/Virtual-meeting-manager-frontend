@@ -25,7 +25,7 @@ export const baseMeetingsRequest = {
 }
 export const authMessageSuccess = {
     img: 'success',
-    title: 'Вы успешно зарегистрировались!'
+    title: 'Всё прошло успешно'
 };
 
 export const authMessageFailure = {

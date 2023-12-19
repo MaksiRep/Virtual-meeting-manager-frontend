@@ -159,21 +159,31 @@ class Api {
         return this._getResponseData(response);
     }
 
-    setUserInfo(name, info, jwt){
-        return fetch(`${this._baseUrl}/users/me`, {
-            method: 'PATCH',
+    async getUsersList(skip, take, jwt) {
+        const response = await fetch(`${this._baseUrl}/Users/getUsersList`, {
+            method: 'POST',
             headers: {
                 authorization: `bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: name,
-                about: info
+                email: '',
+                skip: skip,
+                take: take
             })
-        })
-            .then((res) => {
-                return this._getResponseData(res);
-            });
+        });
+        return this._getResponseData(response);
+    }
+
+    async updateUserInfo(user, jwt) {
+        return await fetch(`${this._baseUrl}/Users/updateUserInfo`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        });
     }
 }
 

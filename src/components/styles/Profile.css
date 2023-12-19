@@ -26,6 +26,12 @@
     margin-right: 0.5rem;
 }
 
+.profile__error{
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
 .profile__personal-title{
     color: #000;
     transition: color 0.2s linear;
@@ -42,4 +48,6 @@
 
 .profile__greetings{
     font-size: 1.5rem;
+    max-width: 23rem;
+    text-align: center;
 }
