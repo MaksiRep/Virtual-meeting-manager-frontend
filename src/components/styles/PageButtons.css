@@ -1,0 +1,33 @@
+.page-buttons{
+    display: flex;
+    width: 30rem;
+    margin: 0 auto 1.7rem;
+    justify-content: space-between;
+}
+
+.page-button{
+    width: 4rem;
+    height: 4rem;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.page-button:hover{
+    opacity: 0.7;
+}
+
+.page-button_none{
+    visibility: hidden;
+}
+
+.page-button_before{
+    background-image: url(../../images/arrow_back.svg);
+}
+
+.page-button_next{
+    background-image: url(../../images/arrow_forward.svg);
+}
