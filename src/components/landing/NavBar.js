@@ -21,9 +21,9 @@ function NavBar(props) {
                     <nav className='menu'>
                     {props.loggedIn ?
                         <>
-                            <NavLink to='/meeting-list' className={({isActive}) => `menu__link 
+                            <NavLink to='/meeting-list/1' className={({isActive}) => `menu__link 
                     ${isActive ? "menu__link_active" : ""}`}>Мероприятия</NavLink>
-                            <NavLink to='/profile' className={({isActive}) => `menu__link 
+                            <NavLink to='/profile/meeting-list/1' className={({isActive}) => `menu__link 
                     ${isActive ? "menu__link_active" : ""}`}>Личный кабинет</NavLink>
                         </> : '' }
                     {!props.loggedIn ? authPath() : ''}

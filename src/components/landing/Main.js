@@ -7,7 +7,7 @@ function Main(props) {
     return(
         <>
             <CreateSection onCreateClick={props.onCreateClick}/>
-            <MeetingList cards={props.cards} onCardClick={props.onCardClick} />
+            <MeetingList cards={props.cards} onCardClick={props.onCardClick} isFull={props.isFull}/>
         </>
     );
 

@@ -39,9 +39,9 @@ function Register(props) {
                 <input className='form-auth__input' type='password' placeholder='Повторите пароль'
                        id='password-repeat-input' name='password' required minLength="2" maxLength="40" ref={repeatPasswordRef}/>
                 <input className='form-auth__input' type='text' placeholder='Имя'
-                       id='name-input' name='name' required minLength="2" maxLength="40" ref={nameRef}/>
+                       id='name-input' name='name' required minLength="1" maxLength="128" ref={nameRef}/>
                 <input className='form-auth__input' type='text' placeholder='Фамилия'
-                       id='surname-input' name='surname' required minLength="2" maxLength="40" ref={surnameRef}/>
+                       id='surname-input' name='surname' required minLength="1" maxLength="128" ref={surnameRef}/>
                 <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber} placeholder='Номер телефона'/>
                 <select className='form-auth__input' placeholder='Пол' id='password-repeat-input' name='password' required ref={sexRef}>
                     <option value='' disabled selected>Пол</option>

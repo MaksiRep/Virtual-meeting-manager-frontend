@@ -23,11 +23,11 @@ function Profile(props) {
         <div className='profile'>
             <div className='profile__info'>
                 <h3 className='profile__greetings'>Здраствуйте, {props.userInfo.firstName}!</h3>
-                <Link to='personal-info' className='profile__personal-info'>
+                <Link to='/profile/personal-info' className='profile__personal-info'>
                     <img className='profile__personal-icon' alt='' src={personalInfoIcon}/>
                     <p className='profile__personal-title'>Личная информация</p>
                 </Link>
-                {props.isAdmin ? <Link to='users-list' className='profile__personal-info'>
+                {props.isAdmin ? <Link to='/profile/users-list' className='profile__personal-info'>
                     <img className='profile__personal-icon' alt='' src={personsIcon}/>
                     <p className='profile__personal-title'>Пользователи</p>
                 </Link> : ''}
