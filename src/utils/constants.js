@@ -8,10 +8,10 @@ export const editPopupStyle = 'popup-form__container';
 export const createMeetingTitle = 'Создание мероприятия';
 export const editMeetingTitle = 'Изменение мероприятия';
 export const baseUrl = 'https://virtual-meeting-manager.af-dev.ru/api';
-export function getDate() {
+export function getDate(birthDate) {
     const today = new Date();
     const month = today.getMonth() + 1;
-    const year = today.getFullYear();
+    const year = birthDate ? today.getFullYear() - 14 : today.getFullYear();
     const date = (today.getDate() < 10) ? '0' + today.getDate() : today.getDate();
     return year + '-' + month + '-' + date;
 }

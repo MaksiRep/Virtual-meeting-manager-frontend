@@ -38,6 +38,7 @@ import MainPage from "./landing/MainPage";
 import ProtectedRouteElement from "./landing/ProtectedRoute";
 import Loader from "./landing/Loader";
 import DeletePopup from "./landing/DeletePopup";
+import UsersPopup from "./landing/UsersPopup";
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
@@ -54,10 +55,12 @@ function App() {
     const [isEditMeetingPopupOpen, setEditMeetingPopupState] = useState(false);
     const [isInfoTooltipPopupOpen, setInfoTooltipPopupState] = useState(false);
     const [isDeletePopupOpen, setDeletePopupState] = useState(false);
+    const [isUsersPopupOpen, setUsersPopupState] = useState(false);
     const [authMessage, setAuthMessage] = useState({});
     const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
     const [openedCard, setOpenedCard] = useState({});
     const [selectedMeeting, setSelectedMeeting] = useState({});
+    const [selectedMeetingUsers, setSelectedMeetingUsers] = useState([]);
     const [selectedEditCard, setSelectedEditCard] = useState({});
     const [selectedUser, setSelectedUser] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
@@ -183,9 +186,9 @@ function App() {
     }, [isLoggedIn]);
 
     useEffect(() => {
-        setLoadedState(false);
         if(isAccessTokenExist()){
             if(isLoggedIn){
+                setLoadedState(false);
                 fetchCards()
                     .then((data) => {
                         const cardsNumber = data.items.length;
@@ -205,7 +208,10 @@ function App() {
                                 .catch(err => console.log(err))
                         }
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        console.log(err);
+                        setLoadedState(true);
+                    });
             }
         }
         else {
@@ -295,16 +301,39 @@ function App() {
         setAnyPopupState(true);
     }
 
+    const handleUsersListClick = () => {
+        setUsersPopupState(true);
+        setAnyPopupState(true);
+    }
+
     const handleOverlayClose = (evt) => {
         if(evt.target === evt.currentTarget)
             closeAllPopups();
     }
 
-    const handleGetCurrentMeeting = async (id) => {
+    const handleGetCurrentMeeting = async (id, isOrg) => {
         setMeetingLoadedStatus(false);
         try {
-            const data = await api.getCurrentMeeting(id, localStorage.getItem('accessToken'))
+            const data = await api.getCurrentMeeting(id, localStorage.getItem('accessToken'));
             setSelectedMeeting(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally
+        {
+            setMeetingLoadedStatus(true);
+        }
+    }
+
+    const handleGetCurrentMeetingUsers = async (id, isOrg) => {
+        setMeetingLoadedStatus(false);
+        try {
+            if (isOrg){
+                const users = await api.getMeetingUsers(id, localStorage.getItem('accessToken'));
+                console.log(users);
+                setSelectedMeetingUsers(users);
+            }
         }
         catch (err) {
             console.log(err);
@@ -518,6 +547,7 @@ function App() {
         setInfoTooltipPopupState(false);
         setCreateMeetingPopupState(false);
         setDeletePopupState(false);
+        setUsersPopupState(false);
         setAnyPopupState(false);
     }
 
@@ -549,7 +579,8 @@ function App() {
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
                                                     loggedIn={isLoggedIn} meetingInfo={selectedMeeting} getInfo={handleGetCurrentMeeting}
                                                     loaded={isMeetingLoaded} onGoing={handleToggleGoing} isAdmin={isAdmin}
-                                                    onDeleteClick={handleDeleteMeetingClick} user={currentUser} isFull={isPageFull}/>}/>
+                                                    onDeleteClick={handleDeleteMeetingClick} user={currentUser} isFull={isPageFull}
+                                                    onNumClick={handleUsersListClick} getUsers={handleGetCurrentMeetingUsers}/>}/>
                                </Routes>
                                :
                                <Loader />
@@ -574,6 +605,8 @@ function App() {
                                 onOverlayClose={handleOverlayClose}/>
                    <DeletePopup isOpen={isDeletePopupOpen} btnMessage={deleteBtn} onClose={closeAllPopups}
                                 onSubmit={handleDeleteMeeting} onOverlayClose={handleOverlayClose}/>
+                   <UsersPopup isOpen={isUsersPopupOpen} onClose={closeAllPopups} onOverlayClose={handleOverlayClose}
+                                users={selectedMeetingUsers}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>

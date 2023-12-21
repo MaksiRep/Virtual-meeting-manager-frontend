@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import '../styles/PersonalInfo.css';
 import '../styles/Auth.css';
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
+import {getDate} from "../../utils/constants";
 import PhoneInput from "react-phone-number-input";
 
 function PersonalInfo(props) {
@@ -54,7 +55,7 @@ function PersonalInfo(props) {
                     <option value='female'>Жен</option>
                 </select>
                 <input className='form-auth__input' type='date' placeholder='Дата рождения'
-                       id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01"
+                       id='birth-date-input' name='birth-date' required min="1900-01-01" max={getDate(true)}
                        ref={dateBirthRef}/>
                 <button className='auth__admit-button'>Сохранить</button>
             </form>

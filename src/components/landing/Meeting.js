@@ -40,6 +40,12 @@ function Meeting(props) {
     }, [currentMeeting, props.meetingInfo.isUserVisitMeeting])
 
     useEffect(() => {
+        if(isOrg){
+            props.getUsers(id, isOrg)
+        }
+    }, [isOrg])
+
+    useEffect(() => {
         if(props.meetingInfo.startDate) {
             setStartDate(getDateFormat(props.meetingInfo.startDate));
             setEndDate(getDateFormat(props.meetingInfo.endDate));
@@ -73,6 +79,12 @@ function Meeting(props) {
 
     function handleGoingClick() {
         props.onGoing(isGoing);
+    }
+
+    function handleUsersClick() {
+        if(isOrg){
+            props.onNumClick();
+        }
     }
 
     return(
@@ -109,7 +121,12 @@ function Meeting(props) {
                                         <div className='meeting__more-info'>
                                             <p className='meeting__info-text'>Начало: <span className='meeting__info-span'>{startDate}</span></p>
                                             <p className='meeting__info-text'>Конец: <span className='meeting__info-span'>{endDate}</span></p>
-                                            <p className='meeting__info-text'>Идёт <span className='meeting__info-span'>{props.meetingInfo.usersCount}</span> человек</p>
+                                            <div className={`meeting__info-number ${isOrg ? 'meeting__info-number-org' : ''}`}
+                                                onClick={handleUsersClick}>
+                                                <p className='meeting__info-text meeting__info-number-text'>Идёт <span
+                                                    className='meeting__info-span'>{props.meetingInfo.usersCount}</span> человек
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

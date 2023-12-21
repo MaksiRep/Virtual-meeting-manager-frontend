@@ -91,6 +91,20 @@ class Api {
         return this._getResponseData(response);
     }
 
+    async getMeetingUsers(id, jwt) {
+        const response = await fetch(`${this._baseUrl}/Meetings/getMeetingUsers`, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                meetingId: id,
+            })
+        });
+        return this._getResponseData(response);
+    }
+
     async updateMeeting(meeting, jwt) {
         return await fetch(`${this._baseUrl}/Meetings/updateMeeting`, {
             method: 'POST',

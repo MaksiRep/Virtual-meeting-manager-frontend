@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import PopupWithForm from "./PopupWithForm";
+import {getDate} from "../../utils/constants";
 import '../styles/Auth.css';
 import PhoneInput from "react-phone-number-input";
 
@@ -56,7 +57,7 @@ function UserPopup(props) {
                 <option value='female'>Жен</option>
             </select>
             <input className='form-auth__input' type='date' placeholder='Дата рождения' ref={dateBirthRef}
-                   id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01"/>
+                   id='birth-date-input' name='birth-date' required min="1900-01-01" max={getDate(true)}/>
             <div className='form__checkbox-block'>
                 <input className='form__checkbox' type='checkbox' placeholder='Email' id='email-input'
                        required minLength="2" maxLength="40" ref={isAdminRef}/>

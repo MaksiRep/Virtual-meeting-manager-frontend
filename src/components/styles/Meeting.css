@@ -96,6 +96,30 @@
     font-size: 1.2rem;
 }
 
+.meeting__info-number{
+    border: 1px solid #c2bdff;
+    background-color: #dcd9ff;
+    border-radius: 5px;
+    margin: 0.2rem 0;
+}
+
+.meeting__info-number-org{
+    cursor: pointer;
+    transition: background-color 0.2s linear;
+}
+
+.meeting__info-number-org:hover{
+    background-color: #c2bdff;
+}
+
+.meeting__info-text{
+    margin: 1rem 0;
+}
+
+.meeting__info-number-text{
+    margin: 0.65rem 0;
+}
+
 .contact-info__text{
     margin: 0;
 }

@@ -15,11 +15,14 @@
     border-bottom: 1px solid #565657;
     justify-content: space-between;
     border-radius: 3px;
+}
+
+.user-list{
     cursor: pointer;
     transition: background-color 0.2s linear;
 }
 
-.user:hover{
+.user-list:hover{
     background-color: #dedbff;
 }
 
@@ -27,11 +30,19 @@
     margin-left: 6rem;
 }
 
+.user__info-popup{
+    margin-left: 3.5rem;
+}
+
 .user__info-mail{
     display: flex;
     margin-left: 0;
     margin-right: 6rem;
     justify-self: flex-end;
+}
+
+.user__info-mail-popup{
+    margin-right: 3.5rem;
 }
 
 .user__edit-button{
