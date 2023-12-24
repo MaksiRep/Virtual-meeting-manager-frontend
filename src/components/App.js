@@ -39,6 +39,7 @@ import ProtectedRouteElement from "./landing/ProtectedRoute";
 import Loader from "./landing/Loader";
 import DeletePopup from "./landing/DeletePopup";
 import UsersPopup from "./landing/UsersPopup";
+import PasswordPopup from "./landing/PasswordPopup";
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
@@ -57,6 +58,7 @@ function App() {
     const [isInfoTooltipPopupOpen, setInfoTooltipPopupState] = useState(false);
     const [isDeletePopupOpen, setDeletePopupState] = useState(false);
     const [isUsersPopupOpen, setUsersPopupState] = useState(false);
+    const [isPasswordPopupOpen, setPasswordPopupState] = useState(false);
     const [authMessage, setAuthMessage] = useState({});
     const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
     const [openedCard, setOpenedCard] = useState({});
@@ -276,7 +278,15 @@ function App() {
     },[isAnyPopupOpen]);
 
     const handleErrorMessage = () => {
+        closeAllPopups();
         setAuthMessage(authMessageFailure);
+        setInfoTooltipPopupState(true);
+        setAnyPopupState(true);
+    }
+
+    const handleSuccessMessage = () => {
+        closeAllPopups();
+        setAuthMessage(authMessageSuccess);
         setInfoTooltipPopupState(true);
         setAnyPopupState(true);
     }
@@ -306,6 +316,11 @@ function App() {
     const handleEditMeetingClick = (info) => {
         setSelectedEditCard(info);
         setEditMeetingPopupState(true);
+        setAnyPopupState(true);
+    }
+
+    const handlePasswordChangeClick = (info) => {
+        setPasswordPopupState(true);
         setAnyPopupState(true);
     }
 
@@ -478,12 +493,10 @@ function App() {
     const handleRegisterSubmit = async (data) => {
         try {
             const tokens = await registerUser(data);
-            setAuthMessage(authMessageSuccess);
-            setInfoTooltipPopupState(true);
-            setAnyPopupState(true);
             setLoggedIn(true);
             localStorage.setItem('accessToken', tokens.accessToken);
             localStorage.setItem('refreshToken', tokens.refreshToken);
+            handleSuccessMessage();
             navigate('/sign-in', {replace: true})
         }
         catch (err) {
@@ -550,14 +563,28 @@ function App() {
         }
     }
 
+    const handleChangeForgottenPassword = (password) => {
+
+    }
 
     const handleRecoveryPassword = (email) => {
         console.log(email);
         closeAllPopups();
     }
 
-    const handleChangePassword = (password) => {
-       console.log(password);
+    const handleChangePassword = async (info) => {
+        setEditBtnMessage(saveBtn);
+        console.log(info);
+        try {
+            await api.changePassword(info, localStorage.getItem('accessToken'));
+            handleSuccessMessage();
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setEditBtnMessage(saveBtnDefault);
+        }
     }
 
     const handleLogOut = () => {
@@ -582,6 +609,7 @@ function App() {
         setDeletePopupState(false);
         setUsersPopupState(false);
         setAnyPopupState(false);
+        setPasswordPopupState(false);
     }
 
     return (
@@ -603,11 +631,12 @@ function App() {
                                    <Route path='/meeting-list/:id' element={<ProtectedRouteElement element={Main} onCreateClick={handleCreateMeetingClick}
                                                     cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn} isFull={isPageFull}/>}/>
                                    <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
-                                                    user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
+                                                    user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}
+                                                    onPasswordClick={handlePasswordChangeClick}/>}/>
                                    <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
                                                     onClick={handleEditUserClick} isLoaded={isUserLoaded}/> : <Navigate to='/profile'
                                                     replace state={{from: location}}/>}/>
-                                   <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
+                                   <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangeForgottenPassword}/>}/>
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
@@ -641,6 +670,9 @@ function App() {
                                 onSubmit={handleDeleteMeeting} onOverlayClose={handleOverlayClose}/>
                    <UsersPopup isOpen={isUsersPopupOpen} onClose={closeAllPopups} onOverlayClose={handleOverlayClose}
                                 users={selectedMeetingUsers}/>
+                   <PasswordPopup isOpen={isPasswordPopupOpen} onClose={closeAllPopups} onOverlayClose={handleOverlayClose}
+                               currentUser={userRoles.id} onError={handleErrorMessage} btnMessage={editBtnMessage}
+                               onSubmit={handleChangePassword}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>

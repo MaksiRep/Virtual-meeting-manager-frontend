@@ -4,6 +4,8 @@ import '../styles/Auth.css';
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 import {getDate} from "../../utils/constants";
 import PhoneInput from "react-phone-number-input";
+import keyIcon from '../../images/key.svg';
+import {Link} from "react-router-dom";
 
 function PersonalInfo(props) {
 
@@ -27,6 +29,10 @@ function PersonalInfo(props) {
         }
     }, [currentUser]);
 
+    function handlePasswordClick() {
+        props.onPasswordClick();
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
         props.onSubmit({
@@ -48,7 +54,8 @@ function PersonalInfo(props) {
                        id='name-input' name='name' required minLength="2" maxLength="40"/>
                 <input className='form-auth__input' type='text' placeholder='Фамилия' ref={surnameRef}
                        id='surname-input' name='surname' required minLength="2" maxLength="40"/>
-                <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber} placeholder='Номер телефона'/>
+                <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber}
+                            placeholder='Номер телефона'/>
                 <select className='form-auth__input' placeholder='Пол' id='password-repeat-input' name='password'
                         ref={sexRef} required>
                     <option value='male'>Муж</option>
@@ -58,6 +65,10 @@ function PersonalInfo(props) {
                        id='birth-date-input' name='birth-date' required min="1900-01-01" max={getDate(true)}
                        ref={dateBirthRef}/>
                 <button className='auth__admit-button'>Сохранить</button>
+                <div className='auth__password-section' onClick={handlePasswordClick}>
+                    <img className='auth__switch-image' src={keyIcon} alt='keyIcon'/>
+                    <p className='auth__switch-text'><span className='auth__switch-link'>Смена пароля</span></p>
+                </div>
             </form>
         </div>
     );

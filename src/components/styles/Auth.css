@@ -72,6 +72,18 @@
     margin-bottom: 0.313rem;
 }
 
+.auth__switch-image{
+    width: 3rem;
+    margin-right: 0.3rem;
+}
+
+.auth__password-section{
+    display: flex;
+    margin: 1rem auto 0;
+    max-width: 12rem;
+    cursor: pointer;
+}
+
 .auth__admit-button{
     display: flex;
     justify-content: center;

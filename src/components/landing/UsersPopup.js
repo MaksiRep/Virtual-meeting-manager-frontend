@@ -22,7 +22,8 @@ function UsersPopup(props) {
                                 ))}
                             </div> :
                             <div>
-                                <h2 className="popup__title">Никто не пришёл на фан-встречу(((</h2>
+                                <h2 className="popup__title">Никто не пришёл на фан-встречу</h2>
+                                <h2 className="popup__title">(((</h2>
                             </div>
                     }
             </div>

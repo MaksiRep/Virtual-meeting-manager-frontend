@@ -37,6 +37,18 @@ class Api {
             });
     }
 
+    async changePassword(info, jwt) {
+        return await fetch(`${this._baseUrl}/Users/changePassword`,
+            {
+                method: 'POST',
+                headers: {
+                    authorization: `bearer ${jwt}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(info)
+            });
+    }
+
     async getInitialMeetings(base, jwt){
         const response = await fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
             {
