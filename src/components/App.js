@@ -38,15 +38,19 @@ import MainPage from "./landing/MainPage";
 import ProtectedRouteElement from "./landing/ProtectedRoute";
 import Loader from "./landing/Loader";
 import DeletePopup from "./landing/DeletePopup";
+import UsersPopup from "./landing/UsersPopup";
+import PasswordPopup from "./landing/PasswordPopup";
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
     const [userRoles, setUserRoles] = useState({});
     const [currentCards, setCurrentCards] = useState([]);
     const [users, setUsers] = useState([]);
+    const [rolesList, setRolesList] = useState([]);
     const [contactInfo, setContactInfo] = useState({});
     const [pageNumber, setPageNumber] = useState(1);
     const [isPageFull, setPageFull] = useState(false);
+    const [meetingRequest, setMeetingRequest] = useState(baseMeetingsRequest);
     const [isDescriptionPopupOpen, setDescriptionPopupState] = useState(false);
     const [isRecoveryPasswordPopupOpen, setRecoveryPasswordPopupState] = useState(false);
     const [isContactInfoPopupOpen, setContactInfoPopupState] = useState(false);
@@ -54,16 +58,22 @@ function App() {
     const [isEditMeetingPopupOpen, setEditMeetingPopupState] = useState(false);
     const [isInfoTooltipPopupOpen, setInfoTooltipPopupState] = useState(false);
     const [isDeletePopupOpen, setDeletePopupState] = useState(false);
+    const [isUsersPopupOpen, setUsersPopupState] = useState(false);
+    const [isPasswordPopupOpen, setPasswordPopupState] = useState(false);
     const [authMessage, setAuthMessage] = useState({});
     const [isEditUserPopupOpen, setEditUserPopupState] = useState(false);
     const [openedCard, setOpenedCard] = useState({});
     const [selectedMeeting, setSelectedMeeting] = useState({});
+    const [selectedMeetingUsers, setSelectedMeetingUsers] = useState([]);
     const [selectedEditCard, setSelectedEditCard] = useState({});
     const [selectedUser, setSelectedUser] = useState({});
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
     const [isLoggedIn, setLoggedIn] = useState(true);
     const [isAdmin, setAdminStatus] = useState(false);
+    const [isUser, setUserStatus] = useState(false);
+    const [isMainAdmin, setMainAdminStatus] = useState(false);
     const [isLoaded, setLoadedState] = useState(false);
+    const [isUserLoaded, setLoadedUserState] = useState(false);
     const [isMeetingLoaded, setMeetingLoadedStatus] = useState(false);
     const [usersNum, setUsersNum] = useState();
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
@@ -86,6 +96,10 @@ function App() {
         if(getMeetingPage()){
             if (getMeetingPage() > 0) {
                 setPageNumber(getMeetingPage());
+                setMeetingRequest({
+                    ...meetingRequest,
+                    skip: (getMeetingPage() > 0) ? (Number(getMeetingPage() - 1) * 30 ) : 0
+                })
             } else {
                 if (location.pathname.includes('profile')) {
                     navigate(`/profile/meeting-list/1`);
@@ -130,9 +144,14 @@ function App() {
         setUsers(usersList.items);
     }
 
-    const fetchCards = async () => {
-        return await api.getInitialMeetings({skip: (getMeetingPage() > 0) ? (Number(getMeetingPage() - 1) * 30 ) : 0, take: 30},
-            localStorage.getItem('accessToken'));
+    const fetchRoles = async () => {
+        const roles = await api.getRoleList(localStorage.getItem('accessToken'));
+        setRolesList(roles);
+    }
+
+    const fetchCards = async (request) => {
+        console.log(meetingRequest);
+        return await api.getInitialMeetings(request, localStorage.getItem('accessToken'));
     }
 
     const fetchImage = async (card) => {
@@ -183,29 +202,10 @@ function App() {
     }, [isLoggedIn]);
 
     useEffect(() => {
-        setLoadedState(false);
         if(isAccessTokenExist()){
             if(isLoggedIn){
-                fetchCards()
-                    .then((data) => {
-                        const cardsNumber = data.items.length;
-                        if(!(cardsNumber)){
-                            if(location.pathname.includes('profile')){
-                                navigate(`/profile/meeting-list/1`);
-                            }
-                            else {
-                                navigate(`/meeting-list/1`);
-                            }
-                        }
-                        setPageFull(cardsNumber === 30);
-                        setCurrentCards(data.items);
-                        setLoadedState(true);
-                        for (const card of data.items) {
-                            fetchImage(card)
-                                .catch(err => console.log(err))
-                        }
-                    })
-                    .catch(err => console.log(err));
+                setLoadedState(false);
+                loadMeetings(meetingRequest);
             }
         }
         else {
@@ -234,10 +234,20 @@ function App() {
     }
 
     useEffect(() => {
-        if(userRoles.roles)
-            if(userRoles.roles.some(role => role === 'admin')){
+        if(userRoles.roles) {
+            if (userRoles.roles.some(role => role === 'admin')) {
                 setAdminStatus(true);
             }
+            if (userRoles.roles.some(role => role === 'mainAdmin')) {
+                setAdminStatus(true);
+                setMainAdminStatus(true);
+                fetchRoles()
+                    .catch(err => console.log(err));
+            }
+            if (userRoles.roles.some(role => role === 'user')) {
+                setUserStatus(true);
+            }
+        }
     }, [userRoles])
 
     useEffect(() => {
@@ -250,8 +260,43 @@ function App() {
         return () => window.removeEventListener('keydown', close)
     },[isAnyPopupOpen]);
 
+    const loadMeetings = (request) => {
+        fetchCards(request)
+            .then((data) => {
+                console.log(data);
+                const cardsNumber = data.items.length;
+                if(!(cardsNumber)){
+                    if(location.pathname.includes('profile')){
+                        navigate(`/profile/meeting-list/1`);
+                    }
+                    else {
+                        navigate(`/meeting-list/1`);
+                    }
+                }
+                setPageFull(cardsNumber === 30);
+                setCurrentCards(data.items);
+                setLoadedState(true);
+                for (const card of data.items) {
+                    fetchImage(card)
+                        .catch(err => console.log(err))
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                setLoadedState(true);
+            });
+    }
+
     const handleErrorMessage = () => {
+        closeAllPopups();
         setAuthMessage(authMessageFailure);
+        setInfoTooltipPopupState(true);
+        setAnyPopupState(true);
+    }
+
+    const handleSuccessMessage = () => {
+        closeAllPopups();
+        setAuthMessage(authMessageSuccess);
         setInfoTooltipPopupState(true);
         setAnyPopupState(true);
     }
@@ -284,14 +329,34 @@ function App() {
         setAnyPopupState(true);
     }
 
-    const handleEditUserClick = (info) => {
-        setSelectedUser(info);
-        setEditUserPopupState(true);
+    const handlePasswordChangeClick = (info) => {
+        setPasswordPopupState(true);
         setAnyPopupState(true);
+    }
+
+    const handleEditUserClick = async (info) => {
+        setLoadedUserState(true);
+        try {
+            const user = await api.getUserInfo(info.id, localStorage.getItem('accessToken'));
+            setSelectedUser(user);
+            setEditUserPopupState(true);
+            setAnyPopupState(true);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setLoadedUserState(false);
+        }
     }
 
     const handleDeleteMeetingClick = () => {
         setDeletePopupState(true);
+        setAnyPopupState(true);
+    }
+
+    const handleUsersListClick = () => {
+        setUsersPopupState(true);
         setAnyPopupState(true);
     }
 
@@ -300,11 +365,29 @@ function App() {
             closeAllPopups();
     }
 
-    const handleGetCurrentMeeting = async (id) => {
+    const handleGetCurrentMeeting = async (id, isOrg) => {
         setMeetingLoadedStatus(false);
         try {
-            const data = await api.getCurrentMeeting(id, localStorage.getItem('accessToken'))
+            const data = await api.getCurrentMeeting(id, localStorage.getItem('accessToken'));
             setSelectedMeeting(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally
+        {
+            setMeetingLoadedStatus(true);
+        }
+    }
+
+    const handleGetCurrentMeetingUsers = async (id, isOrg) => {
+        setMeetingLoadedStatus(false);
+        try {
+            if (isOrg){
+                const users = await api.getMeetingUsers(id, localStorage.getItem('accessToken'));
+                console.log(users);
+                setSelectedMeetingUsers(users);
+            }
         }
         catch (err) {
             console.log(err);
@@ -317,7 +400,6 @@ function App() {
 
     const handleCreateMeeting = async (meeting, img) => {
         setEditBtnMessage(saveBtn);
-        console.log('hi');
         try {
             const meetingId = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
             meeting.id = meetingId.meetingId;
@@ -421,12 +503,10 @@ function App() {
     const handleRegisterSubmit = async (data) => {
         try {
             const tokens = await registerUser(data);
-            setAuthMessage(authMessageSuccess);
-            setInfoTooltipPopupState(true);
-            setAnyPopupState(true);
             setLoggedIn(true);
             localStorage.setItem('accessToken', tokens.accessToken);
             localStorage.setItem('refreshToken', tokens.refreshToken);
+            handleSuccessMessage();
             navigate('/sign-in', {replace: true})
         }
         catch (err) {
@@ -450,9 +530,12 @@ function App() {
         }
     }
 
-    const handleChangeProfile = async (user) => {
+    const handleChangeProfile = async (user, roles) => {
         try{
             await api.updateUserInfo(user, localStorage.getItem('accessToken'));
+            if(isMainAdmin){
+                await api.updateUserRoles(roles, localStorage.getItem('accessToken'));
+            }
             if(currentUser.id === user.userId) {
                 setCurrentUser({
                     ...currentUser,
@@ -490,20 +573,42 @@ function App() {
         }
     }
 
+    const handleChangeForgottenPassword = (password) => {
+
+    }
 
     const handleRecoveryPassword = (email) => {
         console.log(email);
         closeAllPopups();
     }
 
-    const handleChangePassword = (password) => {
-       console.log(password);
+    const handleChangePassword = async (info) => {
+        setEditBtnMessage(saveBtn);
+        console.log(info);
+        try {
+            await api.changePassword(info, localStorage.getItem('accessToken'));
+            handleSuccessMessage();
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setEditBtnMessage(saveBtnDefault);
+        }
+    }
+
+    const handleRequestPage = (request) => {
+        console.log(request);
+        setMeetingRequest(request);
+        loadMeetings(request);
     }
 
     const handleLogOut = () => {
         localStorage.clear();
         setLoggedIn(false);
         setAdminStatus(false);
+        setMainAdminStatus(false);
+        setUserStatus(false);
         navigate('/sign-in', {replace: true});
         setCurrentUser({});
         setCurrentCards([]);
@@ -518,7 +623,9 @@ function App() {
         setInfoTooltipPopupState(false);
         setCreateMeetingPopupState(false);
         setDeletePopupState(false);
+        setUsersPopupState(false);
         setAnyPopupState(false);
+        setPasswordPopupState(false);
     }
 
     return (
@@ -537,19 +644,24 @@ function App() {
                                                     onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/profile/meeting-list/:id' element={<ProtectedRouteElement element={Profile} userInfo={currentUser} userCards={currentCards} o
                                                     onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
-                                   <Route path='/meeting-list/:id' element={<ProtectedRouteElement element={Main} onCreateClick={handleCreateMeetingClick}
-                                                    cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn} isFull={isPageFull}/>}/>
+                                   <Route path='/meeting-list/:id' element={<ProtectedRouteElement element={Main}
+                                                    onCreateClick={handleCreateMeetingClick} cards={currentCards}
+                                                    onCardClick={handleCardClick} loggedIn={isLoggedIn} isFull={isPageFull}
+                                                    onSearchSubmit={handleRequestPage}/>}/>
                                    <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
-                                                    user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
+                                                    user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}
+                                                    onPasswordClick={handlePasswordChangeClick}/>}/>
                                    <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
-                                                    onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
-                                   <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
+                                                    onClick={handleEditUserClick} isLoaded={isUserLoaded}/> : <Navigate to='/profile'
+                                                    replace state={{from: location}}/>}/>
+                                   <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangeForgottenPassword}/>}/>
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
                                                     loggedIn={isLoggedIn} meetingInfo={selectedMeeting} getInfo={handleGetCurrentMeeting}
                                                     loaded={isMeetingLoaded} onGoing={handleToggleGoing} isAdmin={isAdmin}
-                                                    onDeleteClick={handleDeleteMeetingClick} user={currentUser} isFull={isPageFull}/>}/>
+                                                    onDeleteClick={handleDeleteMeetingClick} user={currentUser} isFull={isPageFull}
+                                                    onNumClick={handleUsersListClick} getUsers={handleGetCurrentMeetingUsers}/>}/>
                                </Routes>
                                :
                                <Loader />
@@ -569,11 +681,16 @@ function App() {
                                      style={editPopupStyle} titleName={createMeetingTitle}/>
                    <UserPopup isOpen={isEditUserPopupOpen} btnMessage={editBtnMessage}
                         onClose={closeAllPopups} onSubmit={handleChangeProfile} onOverlayClose={handleOverlayClose}
-                        user={selectedUser}/>
+                        user={selectedUser} isMainAdmin={isMainAdmin} currentUser={userRoles.id} rolesList={rolesList}/>
                    <InfoTooltip authMessage={authMessage} isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups}
                                 onOverlayClose={handleOverlayClose}/>
                    <DeletePopup isOpen={isDeletePopupOpen} btnMessage={deleteBtn} onClose={closeAllPopups}
                                 onSubmit={handleDeleteMeeting} onOverlayClose={handleOverlayClose}/>
+                   <UsersPopup isOpen={isUsersPopupOpen} onClose={closeAllPopups} onOverlayClose={handleOverlayClose}
+                                users={selectedMeetingUsers}/>
+                   <PasswordPopup isOpen={isPasswordPopupOpen} onClose={closeAllPopups} onOverlayClose={handleOverlayClose}
+                               currentUser={userRoles.id} onError={handleErrorMessage} btnMessage={editBtnMessage}
+                               onSubmit={handleChangePassword}/>
                </CurrentCardsContext.Provider>
            </CurrentUserContext.Provider>
         </div>

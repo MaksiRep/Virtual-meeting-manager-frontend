@@ -15,6 +15,7 @@ function Meeting(props) {
     const [endDate, setEndDate] = useState('');
     const [isGoing, setIsGoing] = useState(false);
     const [isOrg, setIsOrg] = useState(false);
+    const isFullMeeting = props.meetingInfo.usersCount === props.meetingInfo.maxUsers;
     let meeting;
     let {id} = useParams();
     id = Number(id);
@@ -30,7 +31,7 @@ function Meeting(props) {
         if(currentMeeting) {
             setIsGoing(props.meetingInfo.isUserVisitMeeting);
             if(props.user.roles) {
-                setIsOrg((props.user.id === props.meetingInfo.managerId || props.user.roles.includes('admin')));
+                setIsOrg((props.user.id === props.meetingInfo.managerId));
             }
         }
     }, [props.meetingInfo, props.meetingInfo.isUserVisitMeeting])
@@ -38,6 +39,12 @@ function Meeting(props) {
     useEffect(() => {
         props.getInfo(id);
     }, [currentMeeting, props.meetingInfo.isUserVisitMeeting])
+
+    useEffect(() => {
+        if(isOrg){
+            props.getUsers(id, isOrg)
+        }
+    }, [isOrg])
 
     useEffect(() => {
         if(props.meetingInfo.startDate) {
@@ -75,6 +82,12 @@ function Meeting(props) {
         props.onGoing(isGoing);
     }
 
+    function handleUsersClick() {
+        if(isOrg){
+            props.onNumClick();
+        }
+    }
+
     return(
         <>
             {props.loaded?
@@ -93,7 +106,7 @@ function Meeting(props) {
                                                 <img className='contact-info__img' src={personalInfoIcon}/>
                                             </div>
                                             {
-                                                isOrg ?
+                                                (isOrg || props.isAdmin) ?
                                                     <>
                                                         <div className='contact-info' onClick={handleEditClick}>
                                                             <p className='contact-info__text'>Редактирование</p>
@@ -109,14 +122,19 @@ function Meeting(props) {
                                         <div className='meeting__more-info'>
                                             <p className='meeting__info-text'>Начало: <span className='meeting__info-span'>{startDate}</span></p>
                                             <p className='meeting__info-text'>Конец: <span className='meeting__info-span'>{endDate}</span></p>
-                                            <p className='meeting__info-text'>Идёт <span className='meeting__info-span'>{props.meetingInfo.usersCount}</span> человек</p>
+                                            <div className={`meeting__info-number ${(isOrg || props.isAdmin) ? 'meeting__info-number-org' : ''}`}
+                                                onClick={handleUsersClick}>
+                                                <p className='meeting__info-text meeting__info-number-text'>Идёт <span
+                                                    className='meeting__info-span'>{props.meetingInfo.usersCount}</span> человек
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className='meeting__other-info'>
                                     <p className='meeting__description'>{props.meetingInfo.description}</p>
                                     <button className='popup__admit-button meeting__button' onClick={handleGoingClick}
-                                            disabled={isOrg && !props.isAdmin}>{isGoing ? 'Не пойду' : 'Пойду'}</button>
+                                            disabled={(isOrg) || isFullMeeting}>{isGoing ? 'Не пойду' : 'Пойду'}</button>
                                 </div>
                             </div>
                         </div> :

@@ -17,10 +17,10 @@ function ContactInfoPopup(props) {
                         <img className='contact-info__name-img' src={emailIcon} alt='email'/>
                         <p className='contact-name-text'>{props.contactInfo.managerFirstName} {props.contactInfo.managerLastName}</p>
                     </div>
-                    <div className='contact-info__line'>
+                    {props.contactInfo.managerPhone ? <div className='contact-info__line'>
                         <img className='contact-info__phone-img' src={phoneIcon} alt='phone'/>
                         <p className='contact-info__phone-text'>{props.contactInfo.managerPhone}</p>
-                    </div>
+                    </div> : <></>}
                 </div>
             </div>
         </div>

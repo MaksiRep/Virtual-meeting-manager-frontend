@@ -2,6 +2,7 @@ import React, {useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import '../styles/Auth.css'
 import PhoneInput from 'react-phone-number-input'
+import {getDate} from "../../utils/constants";
 
 function Register(props) {
 
@@ -49,7 +50,7 @@ function Register(props) {
                     <option value='female'>Жен</option>
                 </select>
                 <input className='form-auth__input' type='date' placeholder='Дата рождения'
-                       id='birth-date-input' name='birth-date' required min="1907-01-01" max="2009-01-01" ref={dateBirthRef}/>
+                       id='birth-date-input' name='birth-date' required min="1900-01-01" max={getDate(true)} ref={dateBirthRef}/>
                 <button className='auth__admit-button' type="submit">Зарегистрироваться</button>
             </form>
             <div className='auth__switch'>

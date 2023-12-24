@@ -6,7 +6,7 @@ function Main(props) {
 
     return(
         <>
-            <CreateSection onCreateClick={props.onCreateClick}/>
+            <CreateSection onCreateClick={props.onCreateClick} onSearchSubmit={props.onSearchSubmit}/>
             <MeetingList cards={props.cards} onCardClick={props.onCardClick} isFull={props.isFull}/>
         </>
     );
