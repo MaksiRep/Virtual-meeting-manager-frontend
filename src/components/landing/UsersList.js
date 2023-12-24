@@ -5,14 +5,15 @@ import {initialUsers} from "../../utils/initialUsers";
 function UsersList(props) {
 
     function handleUserClick(user) {
+        console.log(user);
         props.onClick(user);
     }
 
     return(
         <div className='users-list'>
             <h2 className='user-list__title'>Список пользователей:</h2>
-            {props.users.map((user, id) => (
-                <div className='user user-list' key={user._id} onClick={() => handleUserClick(user)}>
+            {props.users.map((user) => (
+                <div className='user user-list' key={user.id} onClick={() => handleUserClick(user)}>
                     <p className='user__info'>{user.firstName} {user.lastName} </p>
                     <p className='user__info user__info-mail'>{user.email}</p>
                 </div>

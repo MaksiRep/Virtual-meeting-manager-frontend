@@ -13,6 +13,30 @@ class Api {
         return res.json();
     }
 
+    async getRoleList(jwt) {
+        const response = await fetch(`${this._baseUrl}/Admin/getRoleList`,
+            {
+                method: 'GET',
+                headers: {
+                    authorization: `bearer ${jwt}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+        return this._getResponseData(response);
+    }
+
+    async updateUserRoles(roles, jwt) {
+        return await fetch(`${this._baseUrl}/Admin/updateUserRoles`,
+            {
+                method: 'POST',
+                headers: {
+                    authorization: `bearer ${jwt}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(roles)
+            });
+    }
+
     async getInitialMeetings(base, jwt){
         const response = await fetch(`${this._baseUrl}/Meetings/getMeetingsList`,
             {

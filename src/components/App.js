@@ -45,6 +45,7 @@ function App() {
     const [userRoles, setUserRoles] = useState({});
     const [currentCards, setCurrentCards] = useState([]);
     const [users, setUsers] = useState([]);
+    const [rolesList, setRolesList] = useState([]);
     const [contactInfo, setContactInfo] = useState({});
     const [pageNumber, setPageNumber] = useState(1);
     const [isPageFull, setPageFull] = useState(false);
@@ -66,7 +67,10 @@ function App() {
     const [isAnyPopupOpen, setAnyPopupState] = useState(false);
     const [isLoggedIn, setLoggedIn] = useState(true);
     const [isAdmin, setAdminStatus] = useState(false);
+    const [isUser, setUserStatus] = useState(false);
+    const [isMainAdmin, setMainAdminStatus] = useState(false);
     const [isLoaded, setLoadedState] = useState(false);
+    const [isUserLoaded, setLoadedUserState] = useState(false);
     const [isMeetingLoaded, setMeetingLoadedStatus] = useState(false);
     const [usersNum, setUsersNum] = useState();
     const [recoveryBtnMessage, setRecoveryBtnMessage] = useState(recoveryBtnDefault);
@@ -131,6 +135,11 @@ function App() {
     const fetchUsersList = async () => {
         const usersList = await api.getUsersList(0, 30, localStorage.getItem('accessToken'));
         setUsers(usersList.items);
+    }
+
+    const fetchRoles = async () => {
+        const roles = await api.getRoleList(localStorage.getItem('accessToken'));
+        setRolesList(roles);
     }
 
     const fetchCards = async () => {
@@ -240,10 +249,20 @@ function App() {
     }
 
     useEffect(() => {
-        if(userRoles.roles)
-            if(userRoles.roles.some(role => role === 'admin')){
+        if(userRoles.roles) {
+            if (userRoles.roles.some(role => role === 'admin')) {
                 setAdminStatus(true);
             }
+            if (userRoles.roles.some(role => role === 'mainAdmin')) {
+                setAdminStatus(true);
+                setMainAdminStatus(true);
+                fetchRoles()
+                    .catch(err => console.log(err));
+            }
+            if (userRoles.roles.some(role => role === 'user')) {
+                setUserStatus(true);
+            }
+        }
     }, [userRoles])
 
     useEffect(() => {
@@ -290,10 +309,20 @@ function App() {
         setAnyPopupState(true);
     }
 
-    const handleEditUserClick = (info) => {
-        setSelectedUser(info);
-        setEditUserPopupState(true);
-        setAnyPopupState(true);
+    const handleEditUserClick = async (info) => {
+        setLoadedUserState(true);
+        try {
+            const user = await api.getUserInfo(info.id, localStorage.getItem('accessToken'));
+            setSelectedUser(user);
+            setEditUserPopupState(true);
+            setAnyPopupState(true);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setLoadedUserState(false);
+        }
     }
 
     const handleDeleteMeetingClick = () => {
@@ -346,7 +375,6 @@ function App() {
 
     const handleCreateMeeting = async (meeting, img) => {
         setEditBtnMessage(saveBtn);
-        console.log('hi');
         try {
             const meetingId = await api.createMeeting(meeting, localStorage.getItem('accessToken'));
             meeting.id = meetingId.meetingId;
@@ -479,9 +507,12 @@ function App() {
         }
     }
 
-    const handleChangeProfile = async (user) => {
+    const handleChangeProfile = async (user, roles) => {
         try{
             await api.updateUserInfo(user, localStorage.getItem('accessToken'));
+            if(isMainAdmin){
+                await api.updateUserRoles(roles, localStorage.getItem('accessToken'));
+            }
             if(currentUser.id === user.userId) {
                 setCurrentUser({
                     ...currentUser,
@@ -533,6 +564,8 @@ function App() {
         localStorage.clear();
         setLoggedIn(false);
         setAdminStatus(false);
+        setMainAdminStatus(false);
+        setUserStatus(false);
         navigate('/sign-in', {replace: true});
         setCurrentUser({});
         setCurrentCards([]);
@@ -572,7 +605,8 @@ function App() {
                                    <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
                                                     user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}/>}/>
                                    <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
-                                                    onClick={handleEditUserClick}/> : <Navigate to='/profile' replace state={{from: location}}/>}/>
+                                                    onClick={handleEditUserClick} isLoaded={isUserLoaded}/> : <Navigate to='/profile'
+                                                    replace state={{from: location}}/>}/>
                                    <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangePassword}/>}/>
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
@@ -600,7 +634,7 @@ function App() {
                                      style={editPopupStyle} titleName={createMeetingTitle}/>
                    <UserPopup isOpen={isEditUserPopupOpen} btnMessage={editBtnMessage}
                         onClose={closeAllPopups} onSubmit={handleChangeProfile} onOverlayClose={handleOverlayClose}
-                        user={selectedUser}/>
+                        user={selectedUser} isMainAdmin={isMainAdmin} currentUser={userRoles.id} rolesList={rolesList}/>
                    <InfoTooltip authMessage={authMessage} isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups}
                                 onOverlayClose={handleOverlayClose}/>
                    <DeletePopup isOpen={isDeletePopupOpen} btnMessage={deleteBtn} onClose={closeAllPopups}
