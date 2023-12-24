@@ -88,6 +88,10 @@ function App() {
         return localStorage.getItem('accessToken')
     }
 
+    const getErrorMessage = (error) => {
+        return JSON.parse(error.message).message;
+    }
+
     const getMeetingPage = () => {
         return Number(location.pathname.slice(location.pathname.indexOf("/meeting-list") + 14));
     }
@@ -287,9 +291,11 @@ function App() {
             });
     }
 
-    const handleErrorMessage = () => {
+    const handleErrorMessage = (error) => {
         closeAllPopups();
-        setAuthMessage(authMessageFailure);
+        setAuthMessage({
+            ...authMessageFailure,
+            title: error});
         setInfoTooltipPopupState(true);
         setAnyPopupState(true);
     }
@@ -343,7 +349,8 @@ function App() {
             setAnyPopupState(true);
         }
         catch (err) {
-            console.log(err);
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally {
             setLoadedUserState(false);
@@ -372,7 +379,8 @@ function App() {
             setSelectedMeeting(data);
         }
         catch (err) {
-            console.log(err);
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally
         {
@@ -390,7 +398,8 @@ function App() {
             }
         }
         catch (err) {
-            console.log(err);
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally
         {
@@ -411,8 +420,8 @@ function App() {
             closeAllPopups();
         }
         catch (err) {
-            console.log(err);
-            handleErrorMessage();
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally {
             setEditBtnMessage(saveBtnDefault);
@@ -447,7 +456,8 @@ function App() {
             });
         }
         catch (err) {
-            console.log(err);
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally {
             setEditBtnMessage(saveBtnDefault);
@@ -468,7 +478,8 @@ function App() {
             setSelectedMeeting({});
         }
         catch (err) {
-            console.log(err);
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally {
             setDeleteBtn(deleteBtnMessageDefault);
@@ -510,23 +521,22 @@ function App() {
             navigate('/sign-in', {replace: true})
         }
         catch (err) {
-            console.log(err);
-            handleErrorMessage();
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
     }
 
     const handleLoginUser = async (authInfo) => {
         try {
-            const tokens = await loginUser(authInfo)
-                .then();
+            const tokens = await loginUser(authInfo);
             localStorage.setItem('accessToken', tokens.accessToken);
             localStorage.setItem('refreshToken', tokens.refreshToken);
             setLoggedIn(true);
             navigate('/meeting-list/1', {replace: true})
         }
         catch (err) {
-            console.log(err);
-            handleErrorMessage();
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
     }
 
@@ -568,8 +578,8 @@ function App() {
             setAnyPopupState(true);
         }
         catch (err) {
-            console.log(err);
-            handleErrorMessage();
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
     }
 
@@ -590,7 +600,8 @@ function App() {
             handleSuccessMessage();
         }
         catch (err) {
-            console.log(err);
+            console.log(getErrorMessage(err));
+            handleErrorMessage(getErrorMessage(err));
         }
         finally {
             setEditBtnMessage(saveBtnDefault);

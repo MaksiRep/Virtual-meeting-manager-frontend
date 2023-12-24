@@ -8,7 +8,7 @@ class Api {
 
     _getResponseData(res) {
         if (!res.ok) {
-            return Promise.reject(`Ошибка: ${res.status}`)
+            return res.text().then(text => {throw new Error(text)});
         }
         return res.json();
     }
