@@ -50,6 +50,7 @@ function App() {
     const [contactInfo, setContactInfo] = useState({});
     const [pageNumber, setPageNumber] = useState(1);
     const [isPageFull, setPageFull] = useState(false);
+    const [meetingRequest, setMeetingRequest] = useState(baseMeetingsRequest);
     const [isDescriptionPopupOpen, setDescriptionPopupState] = useState(false);
     const [isRecoveryPasswordPopupOpen, setRecoveryPasswordPopupState] = useState(false);
     const [isContactInfoPopupOpen, setContactInfoPopupState] = useState(false);
@@ -95,6 +96,10 @@ function App() {
         if(getMeetingPage()){
             if (getMeetingPage() > 0) {
                 setPageNumber(getMeetingPage());
+                setMeetingRequest({
+                    ...meetingRequest,
+                    skip: (getMeetingPage() > 0) ? (Number(getMeetingPage() - 1) * 30 ) : 0
+                })
             } else {
                 if (location.pathname.includes('profile')) {
                     navigate(`/profile/meeting-list/1`);
@@ -144,9 +149,9 @@ function App() {
         setRolesList(roles);
     }
 
-    const fetchCards = async () => {
-        return await api.getInitialMeetings({skip: (getMeetingPage() > 0) ? (Number(getMeetingPage() - 1) * 30 ) : 0, take: 30},
-            localStorage.getItem('accessToken'));
+    const fetchCards = async (request) => {
+        console.log(meetingRequest);
+        return await api.getInitialMeetings(request, localStorage.getItem('accessToken'));
     }
 
     const fetchImage = async (card) => {
@@ -200,29 +205,7 @@ function App() {
         if(isAccessTokenExist()){
             if(isLoggedIn){
                 setLoadedState(false);
-                fetchCards()
-                    .then((data) => {
-                        const cardsNumber = data.items.length;
-                        if(!(cardsNumber)){
-                            if(location.pathname.includes('profile')){
-                                navigate(`/profile/meeting-list/1`);
-                            }
-                            else {
-                                navigate(`/meeting-list/1`);
-                            }
-                        }
-                        setPageFull(cardsNumber === 30);
-                        setCurrentCards(data.items);
-                        setLoadedState(true);
-                        for (const card of data.items) {
-                            fetchImage(card)
-                                .catch(err => console.log(err))
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        setLoadedState(true);
-                    });
+                loadMeetings(meetingRequest);
             }
         }
         else {
@@ -276,6 +259,33 @@ function App() {
         window.addEventListener('keydown', close);
         return () => window.removeEventListener('keydown', close)
     },[isAnyPopupOpen]);
+
+    const loadMeetings = (request) => {
+        fetchCards(request)
+            .then((data) => {
+                console.log(data);
+                const cardsNumber = data.items.length;
+                if(!(cardsNumber)){
+                    if(location.pathname.includes('profile')){
+                        navigate(`/profile/meeting-list/1`);
+                    }
+                    else {
+                        navigate(`/meeting-list/1`);
+                    }
+                }
+                setPageFull(cardsNumber === 30);
+                setCurrentCards(data.items);
+                setLoadedState(true);
+                for (const card of data.items) {
+                    fetchImage(card)
+                        .catch(err => console.log(err))
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                setLoadedState(true);
+            });
+    }
 
     const handleErrorMessage = () => {
         closeAllPopups();
@@ -587,6 +597,12 @@ function App() {
         }
     }
 
+    const handleRequestPage = (request) => {
+        console.log(request);
+        setMeetingRequest(request);
+        loadMeetings(request);
+    }
+
     const handleLogOut = () => {
         localStorage.clear();
         setLoggedIn(false);
@@ -628,8 +644,10 @@ function App() {
                                                     onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/profile/meeting-list/:id' element={<ProtectedRouteElement element={Profile} userInfo={currentUser} userCards={currentCards} o
                                                     onCardClick={handleCardClick} isAdmin={isAdmin} handleLogOut={handleLogOut} loggedIn={isLoggedIn}/>}/>
-                                   <Route path='/meeting-list/:id' element={<ProtectedRouteElement element={Main} onCreateClick={handleCreateMeetingClick}
-                                                    cards={currentCards} onCardClick={handleCardClick} loggedIn={isLoggedIn} isFull={isPageFull}/>}/>
+                                   <Route path='/meeting-list/:id' element={<ProtectedRouteElement element={Main}
+                                                    onCreateClick={handleCreateMeetingClick} cards={currentCards}
+                                                    onCardClick={handleCardClick} loggedIn={isLoggedIn} isFull={isPageFull}
+                                                    onSearchSubmit={handleRequestPage}/>}/>
                                    <Route path='/profile/personal-info' element={<ProtectedRouteElement element={PersonalInfo}
                                                     user={currentUser} onSubmit={handleChangeProfile} loggedIn={isLoggedIn}
                                                     onPasswordClick={handlePasswordChangeClick}/>}/>
