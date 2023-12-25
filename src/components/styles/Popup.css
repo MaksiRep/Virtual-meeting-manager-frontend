@@ -41,6 +41,8 @@
     margin: 0 1rem 1rem;
     font-size: 1.5rem;
     max-height: max-content;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .popup__form-block{

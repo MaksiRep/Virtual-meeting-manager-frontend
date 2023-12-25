@@ -22,6 +22,14 @@ function CreateSection(props) {
         props.onCreateClick();
     }
 
+    const handleClearForm = () => {
+        setAge('0');
+        startDateRef.current.value = '';
+        endDateRef.current.value = '';
+        genderRef.current.value = 'default';
+        searchRef.current.value = '';
+    }
+
     const handleSubmitSearch = (e) => {
         e.preventDefault();
         props.onSearchSubmit({
@@ -40,6 +48,7 @@ function CreateSection(props) {
             <form className='filter-section' onSubmit={handleSubmitSearch}>
                 <div className='search-section'>
                     <input className='search-input' type='text' placeholder='Название' ref={searchRef}/>
+                    <button className='cancel-button' type='button' onClick={handleClearForm}/>
                     <button className='search-button' type='submit'/>
                     <button className={`filter-button ${isFilterOn ? 'filter-button-active' : ''}`}
                             onClick={handleClickFilters} type='button'/>
@@ -69,7 +78,7 @@ function CreateSection(props) {
                             <div>
                                 <label className='form__label'>{age} лет</label>
                                 <input className='filter-age' type='range' min='0' max='123' defaultValue='0'
-                                       onChange={handleChangeAge}/>
+                                       onChange={handleChangeAge} value={age}/>
                             </div>
                         </div>
                     </div>

@@ -28,7 +28,7 @@ function PasswordPopup(props) {
     }
 
     return(
-        <PopupWithForm title="Восстановление пароля" name="email" button={props.btnMessage} isOpen={props.isOpen}
+        <PopupWithForm title="Смена пароля" name="email" button={props.btnMessage} isOpen={props.isOpen}
                        onClose={props.onClose} onSubmit={handleSubmit} onOverlayClose={props.onOverlayClose}>
             <input className="form__input form__input_type_avatar" type="password" placeholder="Старый пароль"
                    id="old-pswrd-input" name="old-pswrd" required ref={oldPasswordRef}/>

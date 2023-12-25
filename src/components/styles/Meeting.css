@@ -39,7 +39,6 @@
     max-width: 30rem;
     min-width: 10rem;
     min-height: 10rem;
-    margin-right: 5rem;
     border-radius: 10px;
 }
 
@@ -94,6 +93,8 @@
 
 .meeting__description{
     font-size: 1.2rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .meeting__info-number{
@@ -114,6 +115,38 @@
 
 .meeting__info-text{
     margin: 1rem 0;
+}
+
+.meeting__image-section{
+    display: flex;
+    margin-right: 5rem;
+}
+
+.meeting__age-text{
+    color: red;
+    font-weight: bold;
+}
+
+.meeting__age{
+    width: 3rem;
+    height: 3rem;
+    background-color: yellow;
+    text-align: center;
+    position: relative;
+    top: 0.5rem;
+    border-radius: 5rem;
+    opacity: 0.8;
+    right: 3.5rem;
+}
+
+.male{
+    color: blue;
+    font-weight: bold;
+}
+
+.female{
+    color: deeppink;
+    font-weight: bold;
 }
 
 .meeting__info-number-text{

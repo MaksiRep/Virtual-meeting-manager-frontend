@@ -4,6 +4,10 @@ import {initialUsers} from "../../utils/initialUsers";
 
 function UsersList(props) {
 
+    useEffect(() => {
+        props.toLoad(true);
+    }, []);
+
     function handleUserClick(user) {
         console.log(user);
         props.onClick(user);

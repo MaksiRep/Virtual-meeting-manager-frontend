@@ -2,6 +2,11 @@ import React from "react";
 import '../styles/MainPage.css';
 
 function MainPage(props) {
+
+    React.useEffect(() => {
+        props.toLoad(true);
+    })
+
     return(
         <div className='main-page'>
             <div className='main-page-info'>
