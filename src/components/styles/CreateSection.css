@@ -20,6 +20,19 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.cancel-button{
+    width: 1.5rem;
+    height: 1.5rem;
+    background-size: contain;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    position: relative;
+    right: 1.5rem;
+    bottom: 0.2rem;
+    background-image: url(../../images/close.svg);
+}
+
 .gender-section{
     display: flex;
 }
@@ -39,6 +52,9 @@
     height: 1.5rem;
     border: none;
     background-color: transparent;
+    position: relative;
+    right: 1.2rem;
+    bottom: 0.1rem;
     cursor: pointer;
     background-image: url(../../images/search.svg);
 }

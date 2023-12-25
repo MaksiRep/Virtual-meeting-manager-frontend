@@ -2,7 +2,7 @@ import {baseUrl} from "./constants";
 
 function getResponseData(res) {
     if (!res.ok) {
-        return Promise.reject(`Ошибка: ${res.status}`)
+        return res.text().then(text => {throw new Error(text)})
     }
     return res.json();
 }
@@ -27,6 +27,7 @@ export async function loginUser(userInfo) {
         },
         body: JSON.stringify(userInfo)
     });
+    console.log(response);
     return getResponseData(response);
 }
 

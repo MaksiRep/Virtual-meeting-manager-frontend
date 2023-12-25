@@ -78,12 +78,16 @@ function Meeting(props) {
         props.onDeleteClick();
     }
 
+    function genderSymbol() {
+        return props.meetingInfo.gender === 'male' ? '♂' : '♀';
+    }
+
     function handleGoingClick() {
         props.onGoing(isGoing);
     }
 
     function handleUsersClick() {
-        if(isOrg){
+        if(isOrg || props.isAdmin){
             props.onNumClick();
         }
     }
@@ -94,10 +98,18 @@ function Meeting(props) {
                 <>
                     {currentMeeting ?
                         <div className='meeting'>
-                            <h3 className='meeting__title'>{currentMeeting.name}</h3>
+                            <h3 className='meeting__title'>{currentMeeting.name}{props.meetingInfo.gender ?
+                                <span className={genderSymbol() === '♂' ? 'male' : 'female'}>{genderSymbol()}</span> : ''}</h3>
                             <div className='meeting__columns'>
                                 <div className='meeting__info'>
-                                    <img className='meeting__img' src={currentMeeting.imageUrl} alt={currentMeeting.name}/>
+                                    <div className='meeting__image-section'>
+                                        <img className='meeting__img' src={currentMeeting.imageUrl}
+                                             alt={currentMeeting.name}/>
+                                        {props.meetingInfo.minAge ?
+                                            <div className='meeting__age'>
+                                                <p className='meeting__age-text'>{props.meetingInfo.minAge}+</p>
+                                            </div> : <></>}
+                                    </div>
                                     <div className='meeting__info-columns'>
                                         <div className='meeting__owner-info'>
                                             <p className='meeting__owner'>Организатор: {props.meetingInfo.managerEmail}</p>
@@ -110,22 +122,27 @@ function Meeting(props) {
                                                     <>
                                                         <div className='contact-info' onClick={handleEditClick}>
                                                             <p className='contact-info__text'>Редактирование</p>
-                                                            <img className='edit-button__image'  src={pencilIcon}/>
+                                                            <img className='edit-button__image' src={pencilIcon}/>
                                                         </div>
-                                                        <div className='contact-info contact-info-delete' onClick={handleDeleteClick}>
+                                                        <div className='contact-info contact-info-delete'
+                                                             onClick={handleDeleteClick}>
                                                             <p className='contact-info__text'>Удалить мероприятие</p>
-                                                            <img className='delete-button__image'  src={deleteIcon}/>
+                                                            <img className='delete-button__image' src={deleteIcon}/>
                                                         </div>
                                                     </> : <></>
                                             }
                                         </div>
                                         <div className='meeting__more-info'>
-                                            <p className='meeting__info-text'>Начало: <span className='meeting__info-span'>{startDate}</span></p>
-                                            <p className='meeting__info-text'>Конец: <span className='meeting__info-span'>{endDate}</span></p>
-                                            <div className={`meeting__info-number ${(isOrg || props.isAdmin) ? 'meeting__info-number-org' : ''}`}
+                                            <p className='meeting__info-text'>Начало: <span
+                                                className='meeting__info-span'>{startDate}</span></p>
+                                            <p className='meeting__info-text'>Конец: <span
+                                                className='meeting__info-span'>{endDate}</span></p>
+                                            <div
+                                                className={`meeting__info-number ${(isOrg || props.isAdmin) ? 'meeting__info-number-org' : ''}`}
                                                 onClick={handleUsersClick}>
                                                 <p className='meeting__info-text meeting__info-number-text'>Идёт <span
-                                                    className='meeting__info-span'>{props.meetingInfo.usersCount}</span> человек
+                                                    className='meeting__info-span'>{props.meetingInfo.usersCount}
+                                                    {props.meetingInfo.maxUsers ? '/' + props.meetingInfo.maxUsers : ''}</span> человек
                                                 </p>
                                             </div>
                                         </div>
@@ -139,7 +156,7 @@ function Meeting(props) {
                             </div>
                         </div> :
                         <div className='meeting'>
-                            <h3 className='meeting__error'>404</h3>
+                        <h3 className='meeting__error'>404</h3>
                             <h3 className='meeting__title'>Мероприятие не найдено</h3>
                         </div>}
                 </> :

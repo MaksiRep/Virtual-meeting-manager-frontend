@@ -4,19 +4,26 @@ import '../styles/MeetingList.css'
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 import {useLocation} from "react-router-dom";
 import PageButtons from "./PageButtons";
+import Loader from "./Loader";
 
 function MeetingList(props) {
 
-    const location = useLocation();
+    React.useEffect(() => {
+        console.log('aboba');
+        props.toLoad(true);
+    },[])
 
     return(
         <>
-            <section className='elements'>
-                {props.cards.map((card) => (
-                    <Card key={card.id} card={card} onCardClick={props.onCardClick}></Card>
-                ))}
-            </section>
-            <PageButtons isFull={props.isFull}/>
+            {props.isLoaded ?
+                <>
+                    <section className='elements'>
+                        {props.cards.map((card) => (
+                            <Card key={card.id} card={card} onCardClick={props.onCardClick}></Card>
+                        ))}
+                    </section>
+                    <PageButtons isFull={props.isFull}/>
+                </> : <Loader/>}
         </>
     );
 }
