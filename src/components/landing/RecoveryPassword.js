@@ -1,17 +1,33 @@
-import React from "react";
+import React, {useEffect} from "react";
 import '../styles/Auth.css'
+import {useLocation, useSearchParams} from "react-router-dom";
 
 function RecoveryPassword(props) {
 
     const passwordRef = React.useRef();
     const repeatPasswordRef = React.useRef();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const token = searchParams.get('token');
+    const userId = searchParams.get('userId');
+    const location = useLocation()
+
+
+    useEffect(() => {
+        console.log(token);
+        console.log(userId);
+    }, [location]);
 
     function handleSubmit(e) {
         e.preventDefault();
         if (passwordRef.current.value === repeatPasswordRef.current.value){
             props.onSubmit({
-                password: passwordRef.current.value
+                userId: userId,
+                resetToken: token,
+                password: passwordRef.current.value,
             })
+        }
+        else {
+            props.onError('Пароли не совпадают');
         }
     }
 

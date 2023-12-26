@@ -27,6 +27,9 @@ function Register(props) {
                 birthDate: dateBirthRef.current.value,
                 phone: phoneNumber
             })
+        else {
+            props.onError('Пароли не совпадают');
+        }
     }
 
     return(

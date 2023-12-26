@@ -40,6 +40,7 @@ import Loader from "./landing/Loader";
 import DeletePopup from "./landing/DeletePopup";
 import UsersPopup from "./landing/UsersPopup";
 import PasswordPopup from "./landing/PasswordPopup";
+import ForgottenPassword from "./landing/ForgottenPassword";
 
 function App() {
     const [currentUser, setCurrentUser] = useState({});
@@ -118,28 +119,6 @@ function App() {
         }
     }, [location])
 
-
-    useEffect(() => {
-        if(location.pathname === '/sign-in' && location.state){
-            setRouteState(location.state);
-        }
-    },[location])
-
-    useEffect(() => {
-        if(isAdmin && routeAdminState)
-            navigate(routeAdminState);
-    }, [routeAdminState])
-
-    useEffect(() => {
-        if(location.pathname === '/profile' && location.state)
-            setRouteAdminState(location.state.from);
-    }, [isAdmin])
-
-    useEffect(() => {
-        if(isLoggedIn && routeState)
-            navigate(routeState.from);
-    }, [routeState])
-    
     const fetchUser = async () => {
         const userId = await api.getCurrentUser(localStorage.getItem('accessToken'));
         setUserRoles(userId);
@@ -588,13 +567,28 @@ function App() {
         }
     }
 
-    const handleChangeForgottenPassword = (password) => {
-
+    const handleChangeForgottenPassword = async (info) => {
+        console.log(info);
+        try {
+            await api.resetPassword(info);
+            handleSuccessMessage();
+        }
+        catch (err) {
+            console.log(err);
+            handleErrorMessage('Что-то пошло не так!');
+        }
     }
 
-    const handleRecoveryPassword = (email) => {
+    const handleRecoveryPassword = async (email) => {
         console.log(email);
-        closeAllPopups();
+        try {
+            await api.forgotPassword(email);
+            handleSuccessMessage();
+        }
+        catch (err) {
+            console.log(err);
+            handleErrorMessage('Что-то пошло не так!');
+        }
     }
 
     const handleChangePassword = async (info) => {
@@ -651,10 +645,10 @@ function App() {
                        {
                            isLoaded ?
                                <Routes>
-                                   <Route path='/*' element={<Navigate to='/home' replace />}/>
                                    <Route path='/home' element={<MainPage creators={initialUsers} count={usersNum} getCount={getUsersCount}
                                                     isLoaded={isUserCountLoaded}/>}/>
-                                   <Route path='/sign-up' element={(!isLoggedIn) ? <Register onSubmit={handleRegisterSubmit}/>  : <Navigate to='/profile' replace />}/>
+                                   <Route path='/sign-up' element={(!isLoggedIn) ? <Register onSubmit={handleRegisterSubmit} onError={handleErrorMessage}/>
+                                                    : <Navigate to='/profile' replace />}/>
                                    <Route path='/sign-in' element={(!isLoggedIn) ? <Login onRecoveryClick={handleRecoveryPasswordClick}
                                                     onSubmit={handleLoginUser}/>  : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/profile/meeting-list/:id' element={<ProtectedRouteElement element={Profile}
@@ -673,7 +667,9 @@ function App() {
                                    <Route path='/profile/users-list' element={(isAdmin) ? <UsersList users={users}
                                                     onClick={handleEditUserClick} isLoaded={isUsersListLoaded} getUsers={getUsersList}/>
                                                     : <Navigate to='/profile' replace state={{from: location}}/>}/>
-                                   <Route path='/recovery-password/test' element={<RecoveryPassword onSubmit={handleChangeForgottenPassword}/>}/>
+                                   <Route path='/recovery-password'
+                                          element={<RecoveryPassword onSubmit={handleChangeForgottenPassword} onError={handleErrorMessage}/>}/>
+                                   <Route path='/forgotten-password' element={<ForgottenPassword onSubmit={handleRecoveryPassword}/>}/>
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}
@@ -681,6 +677,7 @@ function App() {
                                                     loaded={isMeetingLoaded} onGoing={handleToggleGoing} isAdmin={isAdmin}
                                                     onDeleteClick={handleDeleteMeetingClick} user={currentUser} isFull={isPageFull}
                                                     onNumClick={handleUsersListClick} getUsers={handleGetCurrentMeetingUsers}/>}/>
+                                   <Route path='/*' element={<Navigate to='/home'/>}/>
                                </Routes>
                                :
                                <Loader />
@@ -688,8 +685,6 @@ function App() {
                    </main>
                    <DescriptionPopup isOpen={isDescriptionPopupOpen} card={openedCard} onClose={closeAllPopups}
                         onOverlayClose={handleOverlayClose}/>
-                   <ForgottenPasswordPopup isOpen={isRecoveryPasswordPopupOpen} btnMessage={recoveryBtnMessage}
-                        onClose={closeAllPopups} onSubmit={handleRecoveryPassword} onOverlayClose={handleOverlayClose}/>
                    <ContactInfoPopup isOpen={isContactInfoPopupOpen} onOverlayClose={handleOverlayClose}
                         onClose={closeAllPopups} contactInfo={contactInfo}/>
                    <EditMeetingPopup isOpen={isEditMeetingPopupOpen} btnMessage={editBtnMessage}
