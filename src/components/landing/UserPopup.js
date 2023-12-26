@@ -79,7 +79,7 @@ function UserPopup(props) {
             <input className='form-auth__input' type='text' placeholder='Фамилия' ref={surnameRef}
                    id='surname-input' name='surname' required minLength="2" maxLength="40"/>
             <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber}
-                        placeholder='Номер телефона'/>
+                        placeholder='Номер телефона' maxLength="16"/>
             <select className='form-auth__input' placeholder='Пол' id='password-repeat-input' name='password'
                     ref={sexRef} required>
                 <option value='male'>Муж</option>

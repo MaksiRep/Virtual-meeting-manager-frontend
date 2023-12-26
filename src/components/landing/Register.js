@@ -43,7 +43,7 @@ function Register(props) {
                        id='name-input' name='name' required minLength="1" maxLength="128" ref={nameRef}/>
                 <input className='form-auth__input' type='text' placeholder='Фамилия'
                        id='surname-input' name='surname' required minLength="1" maxLength="128" ref={surnameRef}/>
-                <PhoneInput className='form-auth__input' onChange={setPhoneNumber} value={phoneNumber} placeholder='Номер телефона'/>
+                <PhoneInput className='form-auth__input' maxLength="16" onChange={setPhoneNumber} value={phoneNumber} placeholder='Номер телефона'/>
                 <select className='form-auth__input' placeholder='Пол' id='password-repeat-input' name='password' required ref={sexRef}>
                     <option value='' disabled selected>Пол</option>
                     <option value='male'>Муж</option>

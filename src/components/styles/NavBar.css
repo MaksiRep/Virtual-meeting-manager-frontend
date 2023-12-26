@@ -7,6 +7,10 @@
     align-items: center;
 }
 
+.menu-admin{
+    width: 50%;
+}
+
 @media screen and (max-width: 890px) {
     .menu{
         margin-right: 1.3rem;

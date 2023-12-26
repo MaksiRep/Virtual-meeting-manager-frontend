@@ -22,15 +22,24 @@
 }
 
 .main-page-users{
+    align-items: center;
     display: flex;
     width: 90%;
     margin: 0 auto;
     justify-content: space-between;
 }
 
+.main-page__contact{
+    text-align: center;
+    align-self: end;
+}
+
+.main-page__contact-email{
+    font-weight: bold;
+}
+
 .main-page-users__count{
     font-weight: bold;
-    align-self: center;
 }
 
 .main-page-creators__title{

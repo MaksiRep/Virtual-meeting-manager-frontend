@@ -10,7 +10,6 @@ import {getDateFormat} from "../../utils/constants";
 
 function Meeting(props) {
 
-    const [currentMeeting, setCurrentMeeting] = useState({});
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [isGoing, setIsGoing] = useState(false);
@@ -19,16 +18,9 @@ function Meeting(props) {
     let meeting;
     let {id} = useParams();
     id = Number(id);
-    const currentMeetings = React.useContext(CurrentCardsContext);
-
 
     useEffect(() => {
-        meeting = currentMeetings.find(f => f.id === id);
-        setCurrentMeeting(meeting);
-    }, [currentMeetings])
-
-    useEffect(() => {
-        if(currentMeeting) {
+        if(props.meetingInfo) {
             setIsGoing(props.meetingInfo.isUserVisitMeeting);
             if(props.user.roles) {
                 setIsOrg((props.user.id === props.meetingInfo.managerId));
@@ -38,13 +30,7 @@ function Meeting(props) {
 
     useEffect(() => {
         props.getInfo(id);
-    }, [currentMeeting, props.meetingInfo.isUserVisitMeeting])
-
-    useEffect(() => {
-        if(isOrg){
-            props.getUsers(id, isOrg)
-        }
-    }, [isOrg])
+    }, [])
 
     useEffect(() => {
         if(props.meetingInfo.startDate) {
@@ -64,10 +50,10 @@ function Meeting(props) {
             id: props.meetingInfo.id,
             description: props.meetingInfo.description,
             name: props.meetingInfo.name,
-            link: currentMeeting.imageUrl,
+            link: props.meetingInfo.imageUrl,
             startDate: props.meetingInfo.startDate.slice(0, 10),
             endDate: props.meetingInfo.endDate.slice(0, 10),
-            shortDescription: currentMeeting.shortDescription,
+            shortDescription: props.meetingInfo.shortDescription,
             gender: props.meetingInfo.gender ? props.meetingInfo.gender : 'default',
             maxUsers: props.meetingInfo.maxUsers,
             minAge: props.meetingInfo.minAge
@@ -84,11 +70,12 @@ function Meeting(props) {
 
     function handleGoingClick() {
         props.onGoing(isGoing);
+        props.getInfo(id);
     }
 
     function handleUsersClick() {
         if(isOrg || props.isAdmin){
-            props.onNumClick();
+            props.onNumClick(id, isOrg);
         }
     }
 
@@ -96,15 +83,15 @@ function Meeting(props) {
         <>
             {props.loaded?
                 <>
-                    {currentMeeting ?
+                    {props.meetingInfo ?
                         <div className='meeting'>
-                            <h3 className='meeting__title'>{currentMeeting.name}{props.meetingInfo.gender ?
+                            <h3 className='meeting__title'>{props.meetingInfo.name}{props.meetingInfo.gender ?
                                 <span className={genderSymbol() === '♂' ? 'male' : 'female'}>{genderSymbol()}</span> : ''}</h3>
                             <div className='meeting__columns'>
                                 <div className='meeting__info'>
                                     <div className='meeting__image-section'>
-                                        <img className='meeting__img' src={currentMeeting.imageUrl}
-                                             alt={currentMeeting.name}/>
+                                        <img className='meeting__img' src={props.meetingInfo.imageUrl}
+                                             alt={props.meetingInfo.name}/>
                                         {props.meetingInfo.minAge ?
                                             <div className='meeting__age'>
                                                 <p className='meeting__age-text'>{props.meetingInfo.minAge}+</p>

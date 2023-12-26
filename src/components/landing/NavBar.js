@@ -18,7 +18,7 @@ function NavBar(props) {
         <>
             {
                 props.loaded ?
-                    <nav className='menu'>
+                    <nav className={`menu ${props.isAdmin ? 'menu-admin' : ''}`}>
                     {props.loggedIn ?
                         <>
                             <NavLink to='/meeting-list/1' className={({isActive}) => `menu__link 
@@ -26,6 +26,9 @@ function NavBar(props) {
                             <NavLink to='/profile/meeting-list/1' className={({isActive}) => `menu__link 
                     ${isActive ? "menu__link_active" : ""}`}>Личный кабинет</NavLink>
                         </> : '' }
+                        {props.isAdmin ?
+                            <NavLink to='/profile/users-list' className={({isActive}) => `menu__link 
+                    ${isActive ? "menu__link_active" : ""}`}>Пользователи</NavLink> : <></>}
                     {!props.loggedIn ? authPath() : ''}
                 </nav> :
                     <></>

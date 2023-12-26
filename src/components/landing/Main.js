@@ -5,6 +5,10 @@ import Loader from "./Loader";
 
 function Main(props) {
 
+    useEffect(() => {
+        props.getMeetings();
+    },[props.loggedIn, props.page])
+
     return(
         <>
             <CreateSection onCreateClick={props.onCreateClick} onSearchSubmit={props.onSearchSubmit}/>

@@ -1,6 +1,7 @@
 import React from "react";
 import '../styles/UsersList.css'
 import '../styles/Popup.css'
+import Loader from "./Loader";
 
 
 function UsersPopup(props) {
@@ -10,22 +11,22 @@ function UsersPopup(props) {
              onMouseDown={props.onOverlayClose}>
             <div className="popup__container popup__form-container popup__users-list">
                 <button className="popup__exit-button" type="button" onClick={props.onClose}></button>
-                    {
-                        props.users.length ?
-                            <div className='users-list'>
-                                <h2 className="popup__title">Пользователи, идущие на мероприятие:</h2>
-                                {props.users.map((user) => (
-                                    <div className='user' key={user._id}>
-                                        <p className='user__info user__info-popup'>{user.firstName} {user.lastName} </p>
-                                        <p className='user__info user__info-mail user__info-mail-popup'>{user.email}</p>
-                                    </div>
-                                ))}
-                            </div> :
-                            <div>
-                                <h2 className="popup__title">Никто не пришёл на фан-встречу</h2>
-                                <h2 className="popup__title">(((</h2>
-                            </div>
-                    }
+                {props.isLoaded ?
+                    props.users.length ?
+                        <div className='users-list'>
+                            <h2 className="popup__title">Пользователи, идущие на мероприятие:</h2>
+                            {props.users.map((user) => (
+                                <div className='user' key={user._id}>
+                                    <p className='user__info user__info-popup'>{user.firstName} {user.lastName} </p>
+                                    <p className='user__info user__info-mail user__info-mail-popup'>{user.email}</p>
+                                </div>
+                            ))}
+                        </div> :
+                        <div>
+                            <h2 className="popup__title">Никто не пришёл на фан-встречу</h2>
+                            <h2 className="popup__title">(((</h2>
+                        </div>
+                 : <Loader blockStyle={'loader__block-popup'}/>}
             </div>
         </div>
     )

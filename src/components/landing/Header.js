@@ -10,7 +10,7 @@ function Header(props) {
     return(
        <header className='header'>
            <Link to='/home' className='header__title'>Virtual Meeting Manager</Link>
-           <NavBar loggedIn={props.loggedIn} loaded={props.loaded}/>
+           <NavBar loggedIn={props.loggedIn} loaded={props.loaded} isAdmin={props.isAdmin}/>
        </header>
     );
 

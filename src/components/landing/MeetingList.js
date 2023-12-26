@@ -8,11 +8,6 @@ import Loader from "./Loader";
 
 function MeetingList(props) {
 
-    React.useEffect(() => {
-        console.log('aboba');
-        props.toLoad(true);
-    },[])
-
     return(
         <>
             {props.isLoaded ?
