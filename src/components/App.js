@@ -568,10 +568,10 @@ function App() {
     }
 
     const handleChangeForgottenPassword = async (info) => {
-        console.log(info);
         try {
             await api.resetPassword(info);
             handleSuccessMessage();
+            navigate('/sign-in');
         }
         catch (err) {
             console.log(err);
@@ -669,7 +669,7 @@ function App() {
                                                     : <Navigate to='/profile' replace state={{from: location}}/>}/>
                                    <Route path='/recovery-password'
                                           element={<RecoveryPassword onSubmit={handleChangeForgottenPassword} onError={handleErrorMessage}/>}/>
-                                   <Route path='/forgotten-password' element={<ForgottenPassword onSubmit={handleRecoveryPassword}/>}/>
+                                   <Route path='/forgot-password' element={<ForgottenPassword onSubmit={handleRecoveryPassword}/>}/>
                                    <Route path='/meeting/:id'
                                           element={<ProtectedRouteElement element={Meeting} meetings={currentCards}
                                                     onContactInfoClick={handleContactInfoClick} onEditClick={handleEditMeetingClick}

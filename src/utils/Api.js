@@ -83,14 +83,13 @@ class Api {
     }
 
     async resetPassword(info) {
-        const response = fetch(`${this._baseUrl}/Auth/resetPassword`, {
+        return await fetch(`${this._baseUrl}/Auth/resetPassword`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(info)
         });
-        return this._getResponseData(response);
     }
 
     async getUserInfo(id, jwt) {

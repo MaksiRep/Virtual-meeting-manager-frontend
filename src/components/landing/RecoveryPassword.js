@@ -9,21 +9,15 @@ function RecoveryPassword(props) {
     const [searchParams, setSearchParams] = useSearchParams();
     const token = searchParams.get('token');
     const userId = searchParams.get('userId');
-    const location = useLocation()
-
-
-    useEffect(() => {
-        console.log(token);
-        console.log(userId);
-    }, [location]);
 
     function handleSubmit(e) {
         e.preventDefault();
+        console.log(token);
         if (passwordRef.current.value === repeatPasswordRef.current.value){
             props.onSubmit({
                 userId: userId,
                 resetToken: token,
-                password: passwordRef.current.value,
+                newPassword: passwordRef.current.value
             })
         }
         else {

@@ -27,7 +27,7 @@ function Login(props) {
             </form>
             <div className='auth__switch'>
                 <p className='auth__switch-text'>Ещё не зарегистрированы? <Link to='/sign-up' className='auth__switch-link'>Зарегистрироваться</Link></p>
-                <p className='auth__switch-text'>Забыли пароль? <Link to='/forgotten-password' className='auth__switch-link'>Восстановить</Link></p>
+                <p className='auth__switch-text'>Забыли пароль? <Link to='/forgot-password' className='auth__switch-link'>Восстановить</Link></p>
             </div>
         </div>
     );
